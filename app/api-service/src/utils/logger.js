@@ -13,3 +13,8 @@ export const logger = createLogger({
   defaultMeta: { service: config.serviceName },
   transports: [new _transports.Console()],
 });
+
+export function die(msg) {
+  logger.error(msg);
+  process.exit(1);
+}
