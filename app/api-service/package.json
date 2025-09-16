@@ -20,8 +20,10 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "pg": "^8.16.3",
     "postgres-migrations": "^5.3.0",
+    "uuid": "^13.0.0",
     "winston": "^3.17.0",
     "zod": "^4.1.8"
   }

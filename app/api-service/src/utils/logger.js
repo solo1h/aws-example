@@ -1,17 +1,15 @@
-import { config } from './config.js';
-import { format as _format, createLogger, transports as _transports } from 'winston';
+import winston from 'winston';
 
-const logFormat = _format.combine(
-  _format.timestamp(),
-  _format.errors({ stack: true }),
-  _format.json()
+const logFormat = winston.format.combine(
+  winston.format.timestamp(),
+  winston.format.errors({ stack: true }),
+  winston.format.json()
 );
 
-export const logger = createLogger({
-  level: config.logLevel,
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'debug',
   format: logFormat,
-  defaultMeta: { service: config.serviceName },
-  transports: [new _transports.Console()],
+  transports: [new winston.transports.Console()],
 });
 
 export function die(msg) {

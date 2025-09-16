@@ -1,14 +1,11 @@
 import { config } from './src/utils/config.js';
 import { logger, die } from './src/utils/logger.js';
 import { runMigrations } from './src/utils/db.js';
-
-async function runApp(cfg, log) {
-  log.info('Serving API');
-}
+import { runService } from './src/serveice.js';
 
 const RunMode = {
   init: runMigrations,
-  serve: runApp,
+  serve: runService,
 };
 
 function parseCliCommand() {
@@ -26,13 +23,14 @@ function parseCliCommand() {
 }
 
 async function run() {
-  logger.info(`Start ${config.serviceName}`);
+  const log = logger.child({ service: config.serviceName });
+  log.info(`Start service`);
 
   try {
-    await RunMode[parseCliCommand()](config, logger);
+    await RunMode[parseCliCommand()](config, log);
   } catch (err) {
     die(err);
   }
 }
 
-run();
+await run();

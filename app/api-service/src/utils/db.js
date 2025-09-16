@@ -13,28 +13,34 @@ export function getDbConfig(cfg) {
   };
 }
 
-export async function runMigrations(cfg, log) {
-  const dbConfig = getDbConfig(cfg);
+export async function runMigrations(config, logger) {
+  const log = logger.child({ actor: 'pg DB migration' });
+  const dbConfig = getDbConfig(config);
   dbConfig.database = undefined;
+
   const client = new Client(dbConfig);
   await client.connect();
   try {
     const res = await client.query(
-      `SELECT datname FROM pg_catalog.pg_database WHERE datname = '${cfg.dbName}'`
+      `SELECT datname FROM pg_catalog.pg_database WHERE datname = '${config.dbName}'`
     );
 
     if (res.rowCount === 0) {
-      log.debug(`${cfg.dbName} database not found, creating it.`);
-      await client.query(`CREATE DATABASE "${cfg.dbName}";`);
-      log.debug(`created database ${cfg.dbName}`);
+      log.debug(`${config.dbName} database not found, creating it.`);
+      await client.query(`CREATE DATABASE "${config.dbName}";`);
+      log.debug(`created database ${config.dbName}`);
     } else {
-      log.debug(`${cfg.dbName} database exists.`);
+      log.debug(`${config.dbName} database exists.`);
     }
   } finally {
     await client.end();
   }
 
-  await migrate(getDbConfig(cfg), path.resolve(process.cwd(), 'migrations'), { logger: log.debug });
+  await migrate(getDbConfig(config), path.resolve(process.cwd(), 'migrations'), {
+    logger: msg => {
+      log.debug(msg);
+    },
+  });
 }
 
 export function createPool(cfg, log) {
@@ -56,13 +62,13 @@ export function createPool(cfg, log) {
   return pool;
 }
 
-class Jobs {
+export class Jobs {
   constructor(cfg, log) {
-    this.log = log;
+    this.log = log.child({actor: 'pg'});
     this.cfg = getDbConfig(cfg);
-    this.pool = null; 
+    this.pool = null;
   }
-    
+
   async connect() {
     this.pool = createPool(this.cfg, this.log);
   }
@@ -71,47 +77,20 @@ class Jobs {
     await this.pool.end();
   }
 
-  async insert(jobData) {
-    const query = `
-      INSERT INTO jobs (
-        job_id, status, input_path, output_path, output_cdn_url, mc_job_id, error_message
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-    `;
-    
-    const values = [
-      jobData.job_id,
-      jobData.status,
-      jobData.input_path || null,
-      jobData.output_path || null,
-      jobData.output_cdn_url || null,
-      jobData.mc_job_id || null,
-      jobData.error_message || null
-    ];
+  async register(job_id, input_key) {
+    const query = 'INSERT INTO jobs (job_id, input_key) VALUES ($1, $2)';
+    const values = [job_id, input_key];
 
     try {
       const result = await this.pool.query(query, values);
       return result.rows[0];
     } catch (error) {
-      throw new Error(`Failed to insert job: ${error.message}`);
+      throw new Error(`Failed to register job: ${error.message}`);
     }
   }
 
   async getById(jobId) {
-    const query = `
-      SELECT 
-        job_id,
-        status,
-        input_path,
-        output_path,
-        output_cdn_url,
-        mc_job_id,
-        error_message,
-        created_at,
-        updated_at
-      FROM jobs 
-      WHERE job_id = $1
-    `;
+    const query = 'SELECT * FROM jobs WHERE job_id = $1';
 
     try {
       const result = await this.pool.query(query, [jobId]);
@@ -122,8 +101,8 @@ class Jobs {
   }
 
   async getStatuses(options = {}) {
-    const { limit = 20, offset = 0, status } = options;
-    
+    const { limit = 50, offset = 0, status } = options;
+
     let query = `
       SELECT 
         job_id,
@@ -131,17 +110,17 @@ class Jobs {
         updated_at
       FROM jobs
     `;
-    
+
     const values = [];
     let paramCount = 0;
-    
+
     // Add status filter if provided
     if (status) {
       paramCount++;
       query += ` WHERE status = $${paramCount}`;
       values.push(status);
     }
-    
+
     // Add ordering and pagination
     query += ` ORDER BY updated_at DESC, job_id DESC`;
     query += ` LIMIT $${++paramCount} OFFSET $${++paramCount}`;
@@ -150,7 +129,7 @@ class Jobs {
     // Count query for total
     let countQuery = `SELECT COUNT(*) as total FROM jobs`;
     const countValues = [];
-    
+
     if (status) {
       countQuery += ` WHERE status = $1`;
       countValues.push(status);
@@ -159,7 +138,7 @@ class Jobs {
     try {
       const [jobsResult, countResult] = await Promise.all([
         this.pool.query(query, values),
-        this.pool.query(countQuery, countValues)
+        this.pool.query(countQuery, countValues),
       ]);
 
       const jobs = jobsResult.rows;
@@ -176,8 +155,8 @@ class Jobs {
           offset,
           hasMore,
           totalPages,
-          currentPage
-        }
+          currentPage,
+        },
       };
     } catch (error) {
       throw new Error(`Failed to get jobs list: ${error.message}`);
@@ -209,7 +188,7 @@ class Jobs {
       WHERE job_id = $${++paramCount}
       RETURNING *
     `;
-    
+
     values.push(jobId);
 
     try {
@@ -219,5 +198,4 @@ class Jobs {
       throw new Error(`Failed to update job: ${error.message}`);
     }
   }
-
 }
