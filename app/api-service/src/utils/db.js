@@ -64,7 +64,7 @@ export function createPool(cfg, log) {
 
 export class Jobs {
   constructor(cfg, log) {
-    this.log = log.child({actor: 'pg'});
+    this.log = log.child({ actor: 'pg' });
     this.cfg = getDbConfig(cfg);
     this.pool = null;
   }

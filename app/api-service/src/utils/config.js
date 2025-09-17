@@ -15,7 +15,7 @@ export const config = {
   awsKey: process.env.AWS_ACCESS_KEY_ID || 'test',
   awsSecret: process.env.AWS_SECRET_ACCESS_KEY || 'test',
   awsS3BucketName: process.env.S3_BUCKET_NAME || 'test-bucket',
-  awsS3PresignedUrlExpiry: process.env.S3_PRESIGNED_URL_EXPIRY || '3600'
+  awsS3PresignedUrlExpiry: process.env.S3_PRESIGNED_URL_EXPIRY || '3600',
 };
 
 /* FIXME: validate config

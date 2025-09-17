@@ -3,7 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 export class S3 {
   constructor(config, logger) {
-    this.log = logger.child({actor: 'AWS S3 client'});
+    this.log = logger.child({ actor: 'AWS S3 client' });
     this.cfg = {
       endpoint: config.awsEndpoint,
       region: config.awsRegion,
@@ -13,8 +13,8 @@ export class S3 {
       },
       forcePathStyle: true,
       sslEnabled: false,
-    }
-   
+    };
+
     this.bucketName = config.awsS3BucketName;
     this.presignedUrlExpiry = parseInt(config.awsS3PresignedUrlExpiry);
   }
@@ -32,5 +32,5 @@ export class S3 {
     const ret = await getSignedUrl(client, command, { expiresIn: this.presignedUrlExpiry });
     this.log.debug('Presigned Url created', ret);
     return ret;
-  } 
+  }
 }

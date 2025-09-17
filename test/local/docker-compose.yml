@@ -1,10 +1,9 @@
 networks:
-  testnet:
+  stack:
     driver: bridge
 
 services:
   pgadmin_service:
-    hostname: pgadmin
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
@@ -13,42 +12,74 @@ services:
     ports:
       - "5050:80"
     networks:
-      - testnet
+      - stack
 
   postgres_service:
-    hostname: pg
     image: postgres
     container_name: pg
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - "5432:5432"
     networks:
-      - testnet
+      - stack
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  api-init:
+    image: api-service
+    container_name: api-init
+    environment:
+      SERVICE_NAME: api-init
+      DB_HOST: pg
+    depends_on:
+      postgres_service:
+        condition: service_healthy
+    networks:
+      - stack
+    entrypoint: node index.js init
+
+  api-service:
+    image: api-service
+    container_name: api
+    environment:
+      SERVICE_NAME: api-service
+      SERVICE_API: v1
+      DB_HOST: pg
+      AWS_ENDPOINT_URL: http://localstack:4566
+    depends_on:
+      api-init:
+        condition: service_completed_successfully
+    networks:
+      - stack
 
   localstack:
-    hostname: localstack
+    container_name: localstack
     image: localstack/localstack
     ports:
       - "4567:4566"
     networks:
-      - testnet
+      - stack
     environment:
-      - HOSTNAME=localstack
-      - LOCALSTACK_HOST=localstack
+      #- DEBUG=1
+      - SERVICES=s3,sqs,lambda,events,iam,cloudwatch,logs,secretsmanager
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   aws-cli:
+    container_name: aws-init
     image: amazon/aws-cli
     networks:
-      - testnet
+      - stack
     depends_on:
       - localstack
     environment:
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_ENDPOINT_URL=http://localstack:4566
-    entrypoint: /bin/sh -c
-    command: >
-      "
-        aws s3api create-bucket --bucket test-bucket --region us-east-1 
-      "
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_ENDPOINT_URL: http://localstack:4566
+    volumes:
+      - ./:/aws
+    entrypoint: /bin/sh ./scripts/init-stack.sh

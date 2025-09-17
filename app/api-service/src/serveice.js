@@ -15,7 +15,7 @@ export class UploadApiService {
     this.log = logger;
     this.cfg = getServiceConfig(config);
     this.db = new DbJobs(config, logger);
-    this.s3 = new S3(config, logger)
+    this.s3 = new S3(config, logger);
 
     this.app = express();
     this.setupMiddleware();
@@ -188,7 +188,7 @@ export class UploadApiService {
     return async (req, res) => {
       try {
         const jobId = uuid.v4();
-        const fname = 'foobar'; 
+        const fname = 'foobar';
         // TODO: parse body
         // . get fname
         // . get metadata
