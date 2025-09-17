@@ -1,0 +1,54 @@
+networks:
+  testnet:
+    driver: bridge
+
+services:
+  pgadmin_service:
+    hostname: pgadmin
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+    ports:
+      - "5050:80"
+    networks:
+      - testnet
+
+  postgres_service:
+    hostname: pg
+    image: postgres
+    container_name: pg
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    networks:
+      - testnet
+
+  localstack:
+    hostname: localstack
+    image: localstack/localstack
+    ports:
+      - "4567:4566"
+    networks:
+      - testnet
+    environment:
+      - HOSTNAME=localstack
+      - LOCALSTACK_HOST=localstack
+
+  aws-cli:
+    image: amazon/aws-cli
+    networks:
+      - testnet
+    depends_on:
+      - localstack
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    entrypoint: /bin/sh -c
+    command: >
+      "
+        aws s3api create-bucket --bucket test-bucket --region us-east-1 
+      "

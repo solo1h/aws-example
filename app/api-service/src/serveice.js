@@ -1,6 +1,7 @@
 import express from 'express';
 import * as uuid from 'uuid';
 import { Jobs as DbJobs } from './utils/db.js';
+import { S3 } from './utils/aws.js';
 
 export function getServiceConfig(cfg) {
   return {
@@ -14,6 +15,7 @@ export class UploadApiService {
     this.log = logger;
     this.cfg = getServiceConfig(config);
     this.db = new DbJobs(config, logger);
+    this.s3 = new S3(config, logger)
 
     this.app = express();
     this.setupMiddleware();
@@ -45,6 +47,26 @@ export class UploadApiService {
     }
   }
 
+  setupMiddleware() {
+    this.app.use(express.json({ limit: '10mb' }));
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(this.middlewareLogger());
+  }
+
+  setupRoutes() {
+    this.app.get('/health', this.getHealth());
+    this.app.get('/api/v1/jobs/:jobId', this.getJobById());
+    this.app.get('/api/v1/jobs', this.getJobStatuses());
+    this.app.post('/api/v1/upload-request', this.postUploadRequest());
+
+    this.app.all('*path', (req, res) => {
+      res.status(404).json({
+        error: 'Not found',
+        message: 'Endpoint not found',
+      });
+    });
+  }
+
   middlewareLogger() {
     const logger = this.log;
 
@@ -71,26 +93,6 @@ export class UploadApiService {
 
       next();
     };
-  }
-
-  setupMiddleware() {
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(this.middlewareLogger());
-  }
-
-  setupRoutes() {
-    this.app.get('/health', this.getHealth());
-    this.app.get('/api/v1/jobs/:jobId', this.getJobById());
-    this.app.get('/api/v1/jobs', this.getJobStatuses());
-    this.app.post('/api/v1/upload-request', this.postUploadRequest());
-
-    this.app.all('*path', (req, res) => {
-      res.status(404).json({
-        error: 'Not found',
-        message: 'Endpoint not found',
-      });
-    });
   }
 
   getHealth() {
@@ -156,7 +158,6 @@ export class UploadApiService {
       try {
         const limit = parseInt(req.query.limit) || 50;
 
-        // Validate limit parameter
         if (limit < 1 || limit > 1000) {
           return res.status(400).json({
             error: 'Bad request',
@@ -182,15 +183,19 @@ export class UploadApiService {
   postUploadRequest() {
     const logger = this.log;
     const jobs = this.db;
+    const s3 = this.s3;
 
     return async (req, res) => {
       try {
         const jobId = uuid.v4();
-        const input_key = uuid.v1(); // FIXME aws s3
+        const fname = 'foobar'; 
+        // TODO: parse body
+        // . get fname
+        // . get metadata
 
-        await this.db.register(jobId, input_key);
+        const uploadUrl = await s3.getPresignedUrl(jobId, fname);
+        await jobs.register(jobId);
 
-        const uploadUrl = 'XXXX'; // FIXME build URL
         res.status(200).json({
           job_id: jobId,
           upload_url: uploadUrl,
