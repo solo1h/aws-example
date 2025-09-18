@@ -28,6 +28,56 @@ services:
       start_period: 30s
       timeout: 10s
 
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - "4567:4566"
+    networks:
+      - stack
+    environment:
+      #- DEBUG=1
+      - SERVICES=s3,sqs,lambda,events,iam,cloudwatch,logs,secretsmanager
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - awslocal s3 ls
+          && awslocal sqs list-queues
+          && awslocal iam list-users
+          && awslocal lambda list-functions
+      interval: 5s
+      timeout: 10s
+      start_period: 10s
+
+  aws-init:
+    container_name: aws-init
+    image: amazon/aws-cli
+    networks:
+      - stack
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_ENDPOINT_URL: http://localstack:4566
+    volumes:
+      - ./:/aws
+    entrypoint: /bin/sh ./scripts/init-stack.sh
+
+  mock-mediaconvert:
+    container_name: mediaconvert
+    image: mock-emc
+    ports:
+      - "3001:3000"
+    networks:
+      - stack
+
   api-init:
     image: api-service
     container_name: api-init
@@ -52,34 +102,9 @@ services:
     depends_on:
       api-init:
         condition: service_completed_successfully
-    networks:
-      - stack
-
-  localstack:
-    container_name: localstack
-    image: localstack/localstack
+      aws-init:
+        condition: service_completed_successfully
     ports:
-      - "4567:4566"
+      - "8000:3000"
     networks:
       - stack
-    environment:
-      #- DEBUG=1
-      - SERVICES=s3,sqs,lambda,events,iam,cloudwatch,logs,secretsmanager
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  aws-cli:
-    container_name: aws-init
-    image: amazon/aws-cli
-    networks:
-      - stack
-    depends_on:
-      - localstack
-    environment:
-      AWS_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_ENDPOINT_URL: http://localstack:4566
-    volumes:
-      - ./:/aws
-    entrypoint: /bin/sh ./scripts/init-stack.sh

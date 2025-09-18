@@ -1,0 +1,1336 @@
+import express from 'express';
+import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
+
+const awsConfig = { // FIXME
+  endpoint: 'http://localstack:4566',
+  region: 'us-east-1',
+  credentials: {
+    accessKeyId: 'test',
+    secretAccessKey: 'test',
+  },
+  forcePathStyle: true,
+  sslEnabled: false,
+};
+const ebClient = new EventBridgeClient(awsConfig);
+
+const genJobId = () => {
+  const id =  Array.from({ length: 8 }, () =>
+    'abcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 36))
+  ).join('');
+  return `${Date.now()}-${id}`
+};
+
+const getJobJson = jobId => {
+  const timestamp = new Date().toString();
+  return {
+    AccelerationSettings: {
+      Mode: '',
+    },
+    AccelerationStatus: '',
+    Arn: '',
+    BillingTagsSource: '',
+    CreatedAt: timestamp,
+    CurrentPhase: '',
+    ErrorCode: 64761,
+    ErrorMessage: '',
+    HopDestinations: [
+      {
+        Priority: 5744,
+        Queue: '',
+        WaitMinutes: 13955,
+      },
+    ],
+    Id: `${jobId}`,
+    JobPercentComplete: 98886,
+    JobTemplate: '',
+    Messages: {
+      Info: [''],
+      Warning: [''],
+    },
+    OutputGroupDetails: [
+      {
+        OutputDetails: [
+          {
+            DurationInMs: 85350,
+            VideoDetails: {
+              HeightInPx: 13782,
+              WidthInPx: 85489,
+            },
+          },
+        ],
+      },
+    ],
+    Priority: 41708,
+    Queue: '',
+    QueueTransitions: [
+      {
+        DestinationQueue: '',
+        SourceQueue: '',
+        Timestamp: timestamp,
+      },
+    ],
+    RetryCount: 97162,
+    Role: '',
+    Settings: {
+      AdAvailOffset: 77904,
+      AvailBlanking: {
+        AvailBlankingImage: '',
+      },
+      Esam: {
+        ManifestConfirmConditionNotification: {
+          MccXml: '',
+        },
+        ResponseSignalPreroll: 64275,
+        SignalProcessingNotification: {
+          SccXml: '',
+        },
+      },
+      ExtendedDataServices: {
+        CopyProtectionAction: '',
+        VchipAction: '',
+      },
+      Inputs: [
+        {
+          AudioSelectorGroups: {},
+          AudioSelectors: {},
+          CaptionSelectors: {},
+          Crop: {
+            Height: 22222,
+            Width: 50516,
+            X: 60976,
+            Y: 20176,
+          },
+          DeblockFilter: '',
+          DecryptionSettings: {
+            DecryptionMode: '',
+            EncryptedDecryptionKey: '',
+            InitializationVector: '',
+            KmsKeyRegion: '',
+          },
+          DenoiseFilter: '',
+          FileInput: '',
+          FilterEnable: '',
+          FilterStrength: 95321,
+          ImageInserter: {
+            InsertableImages: [
+              {
+                Duration: 51875,
+                FadeIn: 6376,
+                FadeOut: 42045,
+                Height: 4540,
+                ImageInserterInput: '',
+                ImageX: 5543,
+                ImageY: 23631,
+                Layer: 80159,
+                Opacity: 98774,
+                StartTime: '',
+                Width: 14820,
+              },
+            ],
+          },
+          InputClippings: [
+            {
+              EndTimecode: '',
+              StartTimecode: '',
+            },
+          ],
+          InputScanType: '',
+          Position: {
+            Height: 11791,
+            Width: 61811,
+            X: 10909,
+            Y: 89001,
+          },
+          ProgramNumber: 65325,
+          PsiControl: '',
+          SupplementalImps: [''],
+          TimecodeSource: '',
+          TimecodeStart: '',
+          VideoSelector: {
+            AlphaBehavior: '',
+            ColorSpace: '',
+            ColorSpaceUsage: '',
+            Hdr10Metadata: {
+              BluePrimaryX: 92195,
+              BluePrimaryY: 93618,
+              GreenPrimaryX: 95499,
+              GreenPrimaryY: 17330,
+              MaxContentLightLevel: 62098,
+              MaxFrameAverageLightLevel: 88364,
+              MaxLuminance: 54104,
+              MinLuminance: 97004,
+              RedPrimaryX: 38221,
+              RedPrimaryY: 13677,
+              WhitePointX: 25717,
+              WhitePointY: 49102,
+            },
+            Pid: 94366,
+            ProgramNumber: 86918,
+            Rotate: '',
+            SampleRange: '',
+          },
+        },
+      ],
+      KantarWatermark: {
+        ChannelName: '',
+        ContentReference: '',
+        CredentialsSecretName: '',
+        FileOffset: 0.1211075631317452,
+        KantarLicenseId: 54896,
+        KantarServerUrl: '',
+        LogDestination: '',
+        Metadata3: '',
+        Metadata4: '',
+        Metadata5: '',
+        Metadata6: '',
+        Metadata7: '',
+        Metadata8: '',
+      },
+      MotionImageInserter: {
+        Framerate: {
+          FramerateDenominator: 62909,
+          FramerateNumerator: 79981,
+        },
+        Input: '',
+        InsertionMode: '',
+        Offset: {
+          ImageX: 10894,
+          ImageY: 4527,
+        },
+        Playback: '',
+        StartTime: '',
+      },
+      NielsenConfiguration: {
+        BreakoutCode: 66888,
+        DistributorId: '',
+      },
+      NielsenNonLinearWatermark: {
+        ActiveWatermarkProcess: '',
+        AdiFilename: '',
+        AssetId: '',
+        AssetName: '',
+        CbetSourceId: '',
+        EpisodeId: '',
+        MetadataDestination: '',
+        SourceId: 26946,
+        SourceWatermarkStatus: '',
+        TicServerUrl: '',
+        UniqueTicPerAudioTrack: '',
+      },
+      OutputGroups: [
+        {
+          AutomatedEncodingSettings: {
+            AbrSettings: {
+              MaxAbrBitrate: 3158,
+              MaxRenditions: 44647,
+              MinAbrBitrate: 60665,
+            },
+          },
+          CustomName: '',
+          Name: '',
+          OutputGroupSettings: {
+            CmafGroupSettings: {
+              AdditionalManifests: [
+                {
+                  ManifestNameModifier: '',
+                  SelectedOutputs: [''],
+                },
+              ],
+              BaseUrl: '',
+              ClientCache: '',
+              CodecSpecification: '',
+              Destination: '',
+              DestinationSettings: {
+                S3Settings: {
+                  AccessControl: {
+                    CannedAcl: '',
+                  },
+                  Encryption: {
+                    EncryptionType: '',
+                    KmsEncryptionContext: '',
+                    KmsKeyArn: '',
+                  },
+                },
+              },
+              Encryption: {
+                ConstantInitializationVector: '',
+                EncryptionMethod: '',
+                InitializationVectorInManifest: '',
+                SpekeKeyProvider: {
+                  CertificateArn: '',
+                  DashSignaledSystemIds: [''],
+                  HlsSignaledSystemIds: [''],
+                  ResourceId: '',
+                  Url: '',
+                },
+                StaticKeyProvider: {
+                  KeyFormat: '',
+                  KeyFormatVersions: '',
+                  StaticKeyValue: '',
+                  Url: '',
+                },
+                Type: '',
+              },
+              FragmentLength: 40369,
+              ImageBasedTrickPlay: '',
+              ManifestCompression: '',
+              ManifestDurationFormat: '',
+              MinBufferTime: 17992,
+              MinFinalSegmentLength: 0.007605526879401969,
+              MpdProfile: '',
+              PtsOffsetHandlingForBFrames: '',
+              SegmentControl: '',
+              SegmentLength: 45055,
+              SegmentLengthControl: '',
+              StreamInfResolution: '',
+              TargetDurationCompatibilityMode: '',
+              WriteDashManifest: '',
+              WriteHlsManifest: '',
+              WriteSegmentTimelineInRepresentation: '',
+            },
+            DashIsoGroupSettings: {
+              AdditionalManifests: [
+                {
+                  ManifestNameModifier: '',
+                  SelectedOutputs: [''],
+                },
+              ],
+              AudioChannelConfigSchemeIdUri: '',
+              BaseUrl: '',
+              Destination: '',
+              DestinationSettings: {
+                S3Settings: {
+                  AccessControl: {
+                    CannedAcl: '',
+                  },
+                  Encryption: {
+                    EncryptionType: '',
+                    KmsEncryptionContext: '',
+                    KmsKeyArn: '',
+                  },
+                },
+              },
+              Encryption: {
+                PlaybackDeviceCompatibility: '',
+                SpekeKeyProvider: {
+                  CertificateArn: '',
+                  ResourceId: '',
+                  SystemIds: [''],
+                  Url: '',
+                },
+              },
+              FragmentLength: 42566,
+              HbbtvCompliance: '',
+              ImageBasedTrickPlay: '',
+              MinBufferTime: 62600,
+              MinFinalSegmentLength: 0.2970931723826774,
+              MpdProfile: '',
+              PtsOffsetHandlingForBFrames: '',
+              SegmentControl: '',
+              SegmentLength: 87901,
+              SegmentLengthControl: '',
+              WriteSegmentTimelineInRepresentation: '',
+            },
+            FileGroupSettings: {
+              Destination: '',
+              DestinationSettings: {
+                S3Settings: {
+                  AccessControl: {
+                    CannedAcl: '',
+                  },
+                  Encryption: {
+                    EncryptionType: '',
+                    KmsEncryptionContext: '',
+                    KmsKeyArn: '',
+                  },
+                },
+              },
+            },
+            HlsGroupSettings: {
+              AdMarkers: ['ELEMENTAL_SCTE35'],
+              AdditionalManifests: [
+                {
+                  ManifestNameModifier: '',
+                  SelectedOutputs: [''],
+                },
+              ],
+              AudioOnlyHeader: '',
+              BaseUrl: '',
+              CaptionLanguageMappings: [
+                {
+                  CaptionChannel: 37226,
+                  CustomLanguageCode: '',
+                  LanguageCode: '',
+                  LanguageDescription: '',
+                },
+              ],
+              CaptionLanguageSetting: '',
+              ClientCache: '',
+              CodecSpecification: '',
+              Destination: '',
+              DestinationSettings: {
+                S3Settings: {
+                  AccessControl: {
+                    CannedAcl: '',
+                  },
+                  Encryption: {
+                    EncryptionType: '',
+                    KmsEncryptionContext: '',
+                    KmsKeyArn: '',
+                  },
+                },
+              },
+              DirectoryStructure: '',
+              Encryption: {
+                ConstantInitializationVector: '',
+                EncryptionMethod: '',
+                InitializationVectorInManifest: '',
+                OfflineEncrypted: '',
+                SpekeKeyProvider: {
+                  CertificateArn: '',
+                  ResourceId: '',
+                  SystemIds: [''],
+                  Url: '',
+                },
+                StaticKeyProvider: {
+                  KeyFormat: '',
+                  KeyFormatVersions: '',
+                  StaticKeyValue: '',
+                  Url: '',
+                },
+                Type: '',
+              },
+              ImageBasedTrickPlay: '',
+              ManifestCompression: '',
+              ManifestDurationFormat: '',
+              MinFinalSegmentLength: 0.5892778680838944,
+              MinSegmentLength: 1366,
+              OutputSelection: '',
+              ProgramDateTime: '',
+              ProgramDateTimePeriod: 80663,
+              SegmentControl: '',
+              SegmentLength: 50227,
+              SegmentLengthControl: '',
+              SegmentsPerSubdirectory: 25754,
+              StreamInfResolution: '',
+              TargetDurationCompatibilityMode: '',
+              TimedMetadataId3Frame: '',
+              TimedMetadataId3Period: 29841,
+              TimestampDeltaMilliseconds: 93557,
+            },
+            MsSmoothGroupSettings: {
+              AdditionalManifests: [
+                {
+                  ManifestNameModifier: '',
+                  SelectedOutputs: [''],
+                },
+              ],
+              AudioDeduplication: '',
+              Destination: '',
+              DestinationSettings: {
+                S3Settings: {
+                  AccessControl: {
+                    CannedAcl: '',
+                  },
+                  Encryption: {
+                    EncryptionType: '',
+                    KmsEncryptionContext: '',
+                    KmsKeyArn: '',
+                  },
+                },
+              },
+              Encryption: {
+                SpekeKeyProvider: {
+                  CertificateArn: '',
+                  ResourceId: '',
+                  SystemIds: [''],
+                  Url: '',
+                },
+              },
+              FragmentLength: 23450,
+              FragmentLengthControl: '',
+              ManifestEncoding: '',
+            },
+            Type: '',
+          },
+          Outputs: [
+            {
+              AudioDescriptions: [
+                {
+                  AudioChannelTaggingSettings: {
+                    ChannelTag: '',
+                  },
+                  AudioNormalizationSettings: {
+                    Algorithm: '',
+                    AlgorithmControl: '',
+                    CorrectionGateLevel: 96230,
+                    LoudnessLogging: '',
+                    PeakCalculation: '',
+                    TargetLkfs: 0.819970360675306,
+                  },
+                  AudioSourceName: '',
+                  AudioType: 57383,
+                  AudioTypeControl: '',
+                  CodecSettings: {
+                    AacSettings: {
+                      AudioDescriptionBroadcasterMix: '',
+                      Bitrate: 88988,
+                      CodecProfile: '',
+                      CodingMode: '',
+                      RateControlMode: '',
+                      RawFormat: '',
+                      SampleRate: 81934,
+                      Specification: '',
+                      VbrQuality: '',
+                    },
+                    Ac3Settings: {
+                      Bitrate: 13798,
+                      BitstreamMode: '',
+                      CodingMode: '',
+                      Dialnorm: 80592,
+                      DynamicRangeCompressionLine: '',
+                      DynamicRangeCompressionProfile: '',
+                      DynamicRangeCompressionRf: '',
+                      LfeFilter: '',
+                      MetadataControl: '',
+                      SampleRate: 53510,
+                    },
+                    AiffSettings: {
+                      BitDepth: 92653,
+                      Channels: 1019,
+                      SampleRate: 44471,
+                    },
+                    Codec: '',
+                    Eac3AtmosSettings: {
+                      Bitrate: 30564,
+                      BitstreamMode: '',
+                      CodingMode: '',
+                      DialogueIntelligence: '',
+                      DownmixControl: '',
+                      DynamicRangeCompressionLine: '',
+                      DynamicRangeCompressionRf: '',
+                      DynamicRangeControl: '',
+                      LoRoCenterMixLevel: 0.5044171768685111,
+                      LoRoSurroundMixLevel: 0.8143754887916675,
+                      LtRtCenterMixLevel: 0.8406304556162574,
+                      LtRtSurroundMixLevel: 0.8535995119922141,
+                      MeteringMode: '',
+                      SampleRate: 67059,
+                      SpeechThreshold: 39201,
+                      StereoDownmix: '',
+                      SurroundExMode: '',
+                    },
+                    Eac3Settings: {
+                      AttenuationControl: '',
+                      Bitrate: 20438,
+                      BitstreamMode: '',
+                      CodingMode: '',
+                      DcFilter: '',
+                      Dialnorm: 35491,
+                      DynamicRangeCompressionLine: '',
+                      DynamicRangeCompressionRf: '',
+                      LfeControl: '',
+                      LfeFilter: '',
+                      LoRoCenterMixLevel: 0.42245482839107185,
+                      LoRoSurroundMixLevel: 0.5332082585603485,
+                      LtRtCenterMixLevel: 0.32340303120602887,
+                      LtRtSurroundMixLevel: 0.040625666530799576,
+                      MetadataControl: '',
+                      PassthroughControl: '',
+                      PhaseControl: '',
+                      SampleRate: 28327,
+                      StereoDownmix: '',
+                      SurroundExMode: '',
+                      SurroundMode: '',
+                    },
+                    Mp2Settings: {
+                      Bitrate: 35297,
+                      Channels: 91474,
+                      SampleRate: 34235,
+                    },
+                    Mp3Settings: {
+                      Bitrate: 15743,
+                      Channels: 53821,
+                      RateControlMode: '',
+                      SampleRate: 14205,
+                      VbrQuality: 20520,
+                    },
+                    OpusSettings: {
+                      Bitrate: 58753,
+                      Channels: 43456,
+                      SampleRate: 33075,
+                    },
+                    VorbisSettings: {
+                      Channels: 94666,
+                      SampleRate: 64660,
+                      VbrQuality: 13989,
+                    },
+                    WavSettings: {
+                      BitDepth: 73709,
+                      Channels: 89019,
+                      Format: '',
+                      SampleRate: 9410,
+                    },
+                  },
+                  CustomLanguageCode: '',
+                  LanguageCode: '',
+                  LanguageCodeControl: '',
+                  RemixSettings: {
+                    ChannelMapping: {
+                      OutputChannels: [
+                        {
+                          InputChannels: [91877],
+                          InputChannelsFineTune: [0.8688395750977074],
+                        },
+                      ],
+                    },
+                    ChannelsIn: 34832,
+                    ChannelsOut: 41466,
+                  },
+                  StreamName: '',
+                },
+              ],
+              CaptionDescriptions: [
+                {
+                  CaptionSelectorName: '',
+                  CustomLanguageCode: '',
+                  DestinationSettings: {
+                    BurninDestinationSettings: {
+                      Alignment: '',
+                      BackgroundColor: '',
+                      BackgroundOpacity: 54824,
+                      FontColor: '',
+                      FontOpacity: 64347,
+                      FontResolution: 62495,
+                      FontScript: '',
+                      FontSize: 86307,
+                      OutlineColor: '',
+                      OutlineSize: 35952,
+                      ShadowColor: '',
+                      ShadowOpacity: 31722,
+                      ShadowXOffset: 60994,
+                      ShadowYOffset: 92555,
+                      TeletextSpacing: '',
+                      XPosition: 43179,
+                      YPosition: 48393,
+                    },
+                    DestinationType: '',
+                    DvbSubDestinationSettings: {
+                      Alignment: '',
+                      BackgroundColor: '',
+                      BackgroundOpacity: 44774,
+                      DdsHandling: '',
+                      DdsXCoordinate: 32279,
+                      DdsYCoordinate: 85122,
+                      FontColor: '',
+                      FontOpacity: 89416,
+                      FontResolution: 11696,
+                      FontScript: '',
+                      FontSize: 7085,
+                      Height: 76973,
+                      OutlineColor: '',
+                      OutlineSize: 93765,
+                      ShadowColor: '',
+                      ShadowOpacity: 11397,
+                      ShadowXOffset: 36615,
+                      ShadowYOffset: 26085,
+                      SubtitlingType: '',
+                      TeletextSpacing: '',
+                      Width: 38151,
+                      XPosition: 24084,
+                      YPosition: 38141,
+                    },
+                    EmbeddedDestinationSettings: {
+                      Destination608ChannelNumber: 80243,
+                      Destination708ServiceNumber: 46848,
+                    },
+                    ImscDestinationSettings: {
+                      StylePassthrough: '',
+                    },
+                    SccDestinationSettings: {
+                      Framerate: '',
+                    },
+                    SrtDestinationSettings: {
+                      StylePassthrough: '',
+                    },
+                    TeletextDestinationSettings: {
+                      PageNumber: '',
+                      PageTypes: ['PAGE_TYPE_HEARING_IMPAIRED_SUBTITLE'],
+                    },
+                    TtmlDestinationSettings: {
+                      StylePassthrough: '',
+                    },
+                    WebvttDestinationSettings: {
+                      StylePassthrough: '',
+                    },
+                  },
+                  LanguageCode: '',
+                  LanguageDescription: '',
+                },
+              ],
+              ContainerSettings: {
+                CmfcSettings: {
+                  AudioDuration: '',
+                  AudioGroupId: '',
+                  AudioRenditionSets: '',
+                  AudioTrackType: '',
+                  DescriptiveVideoServiceFlag: '',
+                  IFrameOnlyManifest: '',
+                  Scte35Esam: '',
+                  Scte35Source: '',
+                },
+                Container: '',
+                F4vSettings: {
+                  MoovPlacement: '',
+                },
+                M2tsSettings: {
+                  AudioBufferModel: '',
+                  AudioDuration: '',
+                  AudioFramesPerPes: 85866,
+                  AudioPids: [92516],
+                  Bitrate: 38025,
+                  BufferModel: '',
+                  DataPTSControl: '',
+                  DvbNitSettings: {
+                    NetworkId: 42841,
+                    NetworkName: '',
+                    NitInterval: 1412,
+                  },
+                  DvbSdtSettings: {
+                    OutputSdt: '',
+                    SdtInterval: 65747,
+                    ServiceName: '',
+                    ServiceProviderName: '',
+                  },
+                  DvbSubPids: [16095],
+                  DvbTdtSettings: {
+                    TdtInterval: 20603,
+                  },
+                  DvbTeletextPid: 96396,
+                  EbpAudioInterval: '',
+                  EbpPlacement: '',
+                  EsRateInPes: '',
+                  ForceTsVideoEbpOrder: '',
+                  FragmentTime: 0.14124866028040084,
+                  MaxPcrInterval: 17520,
+                  MinEbpInterval: 48515,
+                  NielsenId3: '',
+                  NullPacketBitrate: 0.34861563001033424,
+                  PatInterval: 40732,
+                  PcrControl: '',
+                  PcrPid: 31144,
+                  PmtInterval: 50375,
+                  PmtPid: 41865,
+                  PrivateMetadataPid: 9095,
+                  ProgramNumber: 54865,
+                  RateMode: '',
+                  Scte35Esam: {
+                    Scte35EsamPid: 94720,
+                  },
+                  Scte35Pid: 59469,
+                  Scte35Source: '',
+                  SegmentationMarkers: '',
+                  SegmentationStyle: '',
+                  SegmentationTime: 0.4807643074199298,
+                  TimedMetadataPid: 87494,
+                  TransportStreamId: 12528,
+                  VideoPid: 16626,
+                },
+                M3u8Settings: {
+                  AudioDuration: '',
+                  AudioFramesPerPes: 78139,
+                  AudioPids: [14226],
+                  DataPTSControl: '',
+                  MaxPcrInterval: 20672,
+                  NielsenId3: '',
+                  PatInterval: 69971,
+                  PcrControl: '',
+                  PcrPid: 95577,
+                  PmtInterval: 14414,
+                  PmtPid: 64481,
+                  PrivateMetadataPid: 28103,
+                  ProgramNumber: 53098,
+                  Scte35Pid: 34624,
+                  Scte35Source: '',
+                  TimedMetadata: '',
+                  TimedMetadataPid: 73292,
+                  TransportStreamId: 87646,
+                  VideoPid: 3347,
+                },
+                MovSettings: {
+                  ClapAtom: '',
+                  CslgAtom: '',
+                  Mpeg2FourCCControl: '',
+                  PaddingControl: '',
+                  Reference: '',
+                },
+                Mp4Settings: {
+                  AudioDuration: '',
+                  CslgAtom: '',
+                  CttsVersion: 54194,
+                  FreeSpaceBox: '',
+                  MoovPlacement: '',
+                  Mp4MajorBrand: '',
+                },
+                MpdSettings: {
+                  AccessibilityCaptionHints: '',
+                  AudioDuration: '',
+                  CaptionContainerType: '',
+                  Scte35Esam: '',
+                  Scte35Source: '',
+                },
+                MxfSettings: {
+                  AfdSignaling: '',
+                  Profile: '',
+                  XavcProfileSettings: {
+                    DurationMode: '',
+                    MaxAncDataSize: 52070,
+                  },
+                },
+              },
+              Extension: '',
+              NameModifier: '',
+              OutputSettings: {
+                HlsSettings: {
+                  AudioGroupId: '',
+                  AudioOnlyContainer: '',
+                  AudioRenditionSets: '',
+                  AudioTrackType: '',
+                  DescriptiveVideoServiceFlag: '',
+                  IFrameOnlyManifest: '',
+                  SegmentModifier: '',
+                },
+              },
+              Preset: '',
+              VideoDescription: {
+                AfdSignaling: '',
+                AntiAlias: '',
+                CodecSettings: {
+                  Av1Settings: {
+                    AdaptiveQuantization: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 65203,
+                    FramerateNumerator: 2469,
+                    GopSize: 0.7686948679521167,
+                    MaxBitrate: 52089,
+                    NumberBFramesBetweenReferenceFrames: 72120,
+                    QvbrSettings: {
+                      QvbrQualityLevel: 51784,
+                      QvbrQualityLevelFineTune: 0.8347282590639021,
+                    },
+                    RateControlMode: '',
+                    Slices: 20823,
+                    SpatialAdaptiveQuantization: '',
+                  },
+                  AvcIntraSettings: {
+                    AvcIntraClass: '',
+                    AvcIntraUhdSettings: {
+                      QualityTuningLevel: '',
+                    },
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 74367,
+                    FramerateNumerator: 13885,
+                    InterlaceMode: '',
+                    ScanTypeConversionMode: '',
+                    SlowPal: '',
+                    Telecine: '',
+                  },
+                  Codec: '',
+                  FrameCaptureSettings: {
+                    FramerateDenominator: 36525,
+                    FramerateNumerator: 4438,
+                    MaxCaptures: 30477,
+                    Quality: 56853,
+                  },
+                  H264Settings: {
+                    AdaptiveQuantization: '',
+                    Bitrate: 91361,
+                    CodecLevel: '',
+                    CodecProfile: '',
+                    DynamicSubGop: '',
+                    EntropyEncoding: '',
+                    FieldEncoding: '',
+                    FlickerAdaptiveQuantization: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 12841,
+                    FramerateNumerator: 54964,
+                    GopBReference: '',
+                    GopClosedCadence: 41685,
+                    GopSize: 0.9777206457202683,
+                    GopSizeUnits: '',
+                    HrdBufferInitialFillPercentage: 12457,
+                    HrdBufferSize: 60957,
+                    InterlaceMode: '',
+                    MaxBitrate: 80737,
+                    MinIInterval: 61573,
+                    NumberBFramesBetweenReferenceFrames: 87833,
+                    NumberReferenceFrames: 16472,
+                    ParControl: '',
+                    ParDenominator: 55896,
+                    ParNumerator: 12760,
+                    QualityTuningLevel: '',
+                    QvbrSettings: {
+                      MaxAverageBitrate: 32835,
+                      QvbrQualityLevel: 46034,
+                      QvbrQualityLevelFineTune: 0.8542660018400587,
+                    },
+                    RateControlMode: '',
+                    RepeatPps: '',
+                    ScanTypeConversionMode: '',
+                    SceneChangeDetect: '',
+                    Slices: 64388,
+                    SlowPal: '',
+                    Softness: 47233,
+                    SpatialAdaptiveQuantization: '',
+                    Syntax: '',
+                    Telecine: '',
+                    TemporalAdaptiveQuantization: '',
+                    UnregisteredSeiTimecode: '',
+                  },
+                  H265Settings: {
+                    AdaptiveQuantization: '',
+                    AlternateTransferFunctionSei: '',
+                    Bitrate: 73109,
+                    CodecLevel: '',
+                    CodecProfile: '',
+                    DynamicSubGop: '',
+                    FlickerAdaptiveQuantization: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 17824,
+                    FramerateNumerator: 52121,
+                    GopBReference: '',
+                    GopClosedCadence: 56163,
+                    GopSize: 0.15033065392308298,
+                    GopSizeUnits: '',
+                    HrdBufferInitialFillPercentage: 37378,
+                    HrdBufferSize: 58569,
+                    InterlaceMode: '',
+                    MaxBitrate: 29615,
+                    MinIInterval: 20010,
+                    NumberBFramesBetweenReferenceFrames: 82585,
+                    NumberReferenceFrames: 59820,
+                    ParControl: '',
+                    ParDenominator: 67416,
+                    ParNumerator: 83566,
+                    QualityTuningLevel: '',
+                    QvbrSettings: {
+                      MaxAverageBitrate: 20681,
+                      QvbrQualityLevel: 34744,
+                      QvbrQualityLevelFineTune: 0.11295514112323968,
+                    },
+                    RateControlMode: '',
+                    SampleAdaptiveOffsetFilterMode: '',
+                    ScanTypeConversionMode: '',
+                    SceneChangeDetect: '',
+                    Slices: 49624,
+                    SlowPal: '',
+                    SpatialAdaptiveQuantization: '',
+                    Telecine: '',
+                    TemporalAdaptiveQuantization: '',
+                    TemporalIds: '',
+                    Tiles: '',
+                    UnregisteredSeiTimecode: '',
+                    WriteMp4PackagingType: '',
+                  },
+                  Mpeg2Settings: {
+                    AdaptiveQuantization: '',
+                    Bitrate: 10947,
+                    CodecLevel: '',
+                    CodecProfile: '',
+                    DynamicSubGop: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 32797,
+                    FramerateNumerator: 20050,
+                    GopClosedCadence: 68617,
+                    GopSize: 0.9038126294463262,
+                    GopSizeUnits: '',
+                    HrdBufferInitialFillPercentage: 54112,
+                    HrdBufferSize: 63027,
+                    InterlaceMode: '',
+                    IntraDcPrecision: '',
+                    MaxBitrate: 66288,
+                    MinIInterval: 55573,
+                    NumberBFramesBetweenReferenceFrames: 4072,
+                    ParControl: '',
+                    ParDenominator: 84668,
+                    ParNumerator: 85985,
+                    QualityTuningLevel: '',
+                    RateControlMode: '',
+                    ScanTypeConversionMode: '',
+                    SceneChangeDetect: '',
+                    SlowPal: '',
+                    Softness: 10753,
+                    SpatialAdaptiveQuantization: '',
+                    Syntax: '',
+                    Telecine: '',
+                    TemporalAdaptiveQuantization: '',
+                  },
+                  ProresSettings: {
+                    ChromaSampling: '',
+                    CodecProfile: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 94741,
+                    FramerateNumerator: 40153,
+                    InterlaceMode: '',
+                    ParControl: '',
+                    ParDenominator: 12635,
+                    ParNumerator: 73924,
+                    ScanTypeConversionMode: '',
+                    SlowPal: '',
+                    Telecine: '',
+                  },
+                  Vc3Settings: {
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 16967,
+                    FramerateNumerator: 13867,
+                    InterlaceMode: '',
+                    ScanTypeConversionMode: '',
+                    SlowPal: '',
+                    Telecine: '',
+                    Vc3Class: '',
+                  },
+                  Vp8Settings: {
+                    Bitrate: 47339,
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 93521,
+                    FramerateNumerator: 89902,
+                    GopSize: 0.3199074652306575,
+                    HrdBufferSize: 34890,
+                    MaxBitrate: 49862,
+                    ParControl: '',
+                    ParDenominator: 36338,
+                    ParNumerator: 51494,
+                    QualityTuningLevel: '',
+                    RateControlMode: '',
+                  },
+                  Vp9Settings: {
+                    Bitrate: 87800,
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 74313,
+                    FramerateNumerator: 16672,
+                    GopSize: 0.5966330692275739,
+                    HrdBufferSize: 29549,
+                    MaxBitrate: 79836,
+                    ParControl: '',
+                    ParDenominator: 69451,
+                    ParNumerator: 25006,
+                    QualityTuningLevel: '',
+                    RateControlMode: '',
+                  },
+                  XavcSettings: {
+                    AdaptiveQuantization: '',
+                    EntropyEncoding: '',
+                    FramerateControl: '',
+                    FramerateConversionAlgorithm: '',
+                    FramerateDenominator: 1444,
+                    FramerateNumerator: 20049,
+                    Profile: '',
+                    SlowPal: '',
+                    Softness: 34337,
+                    SpatialAdaptiveQuantization: '',
+                    TemporalAdaptiveQuantization: '',
+                    Xavc4kIntraCbgProfileSettings: {
+                      XavcClass: '',
+                    },
+                    Xavc4kIntraVbrProfileSettings: {
+                      XavcClass: '',
+                    },
+                    Xavc4kProfileSettings: {
+                      BitrateClass: '',
+                      CodecProfile: '',
+                      FlickerAdaptiveQuantization: '',
+                      GopBReference: '',
+                      GopClosedCadence: 55527,
+                      HrdBufferSize: 8697,
+                      QualityTuningLevel: '',
+                      Slices: 68085,
+                    },
+                    XavcHdIntraCbgProfileSettings: {
+                      XavcClass: '',
+                    },
+                    XavcHdProfileSettings: {
+                      BitrateClass: '',
+                      FlickerAdaptiveQuantization: '',
+                      GopBReference: '',
+                      GopClosedCadence: 12955,
+                      HrdBufferSize: 51639,
+                      InterlaceMode: '',
+                      QualityTuningLevel: '',
+                      Slices: 47013,
+                      Telecine: '',
+                    },
+                  },
+                },
+                ColorMetadata: '',
+                Crop: {
+                  Height: 91456,
+                  Width: 68000,
+                  X: 34727,
+                  Y: 60765,
+                },
+                DropFrameTimecode: '',
+                FixedAfd: 86270,
+                Height: 76110,
+                Position: {
+                  Height: 59696,
+                  Width: 53185,
+                  X: 90178,
+                  Y: 16909,
+                },
+                RespondToAfd: '',
+                ScalingBehavior: '',
+                Sharpness: 57149,
+                TimecodeInsertion: '',
+                VideoPreprocessors: {
+                  ColorCorrector: {
+                    Brightness: 65924,
+                    ColorSpaceConversion: '',
+                    Contrast: 87866,
+                    Hdr10Metadata: {
+                      BluePrimaryX: 46255,
+                      BluePrimaryY: 53112,
+                      GreenPrimaryX: 96694,
+                      GreenPrimaryY: 88080,
+                      MaxContentLightLevel: 58548,
+                      MaxFrameAverageLightLevel: 32533,
+                      MaxLuminance: 14288,
+                      MinLuminance: 26555,
+                      RedPrimaryX: 70696,
+                      RedPrimaryY: 53568,
+                      WhitePointX: 42691,
+                      WhitePointY: 28142,
+                    },
+                    Hue: 63218,
+                    SampleRangeConversion: '',
+                    Saturation: 79104,
+                  },
+                  Deinterlacer: {
+                    Algorithm: '',
+                    Control: '',
+                    Mode: '',
+                  },
+                  DolbyVision: {
+                    L6Metadata: {
+                      MaxCll: 57457,
+                      MaxFall: 23250,
+                    },
+                    L6Mode: '',
+                    Profile: '',
+                  },
+                  Hdr10Plus: {
+                    MasteringMonitorNits: 22634,
+                    TargetMonitorNits: 63095,
+                  },
+                  ImageInserter: {
+                    InsertableImages: [
+                      {
+                        Duration: 27106,
+                        FadeIn: 74340,
+                        FadeOut: 95847,
+                        Height: 90657,
+                        ImageInserterInput: '',
+                        ImageX: 17684,
+                        ImageY: 7038,
+                        Layer: 20957,
+                        Opacity: 7539,
+                        StartTime: '',
+                        Width: 6856,
+                      },
+                    ],
+                  },
+                  NoiseReducer: {
+                    Filter: '',
+                    FilterSettings: {
+                      Strength: 78843,
+                    },
+                    SpatialFilterSettings: {
+                      PostFilterSharpenStrength: 19696,
+                      Speed: 20049,
+                      Strength: 10278,
+                    },
+                    TemporalFilterSettings: {
+                      AggressiveMode: 6508,
+                      PostTemporalSharpening: '',
+                      Speed: 12441,
+                      Strength: 63532,
+                    },
+                  },
+                  PartnerWatermarking: {
+                    NexguardFileMarkerSettings: {
+                      License: '',
+                      Payload: 82739,
+                      Preset: '',
+                      Strength: '',
+                    },
+                  },
+                  TimecodeBurnin: {
+                    FontSize: 73364,
+                    Position: '',
+                    Prefix: '',
+                  },
+                },
+                Width: 22922,
+              },
+            },
+          ],
+        },
+      ],
+      TimecodeConfig: {
+        Anchor: '',
+        Source: '',
+        Start: '',
+        TimestampOffset: '',
+      },
+      TimedMetadataInsertion: {
+        Id3Insertions: [
+          {
+            Id3: '',
+            Timecode: '',
+          },
+        ],
+      },
+    },
+    SimulateReservedQueue: '',
+    Status: '',
+    StatusUpdateInterval: '',
+    Timing: {
+      FinishTime: timestamp,
+      StartTime: timestamp,
+      SubmitTime: timestamp,
+    },
+    UserMetadata: {},
+  };
+};
+
+const sendEventError = async (jobId, code, msg) => {
+  const res = await ebClient.send(
+    new PutEventsCommand({
+      Entries: [
+        {
+          Source: 'aws.mediaconvert',
+          DetailType: 'MediaConvert Job State Change',
+          Resources: [`arn:aws:mediaconvert:us-east-1:000000000000:jobs/${jobId}`],
+          Detail: JSON.stringify({
+            timestamp: Date.now(),
+            queue: 'arn:aws:mediaconvert:us-east-1:000000000000:queues/Default',
+            jobId: jobId,
+            status: 'ERROR',
+            errorCode: code,
+            errorMessage: msg,
+          }),
+        },
+      ],
+    }),
+  );
+  console.log(res);
+};
+
+const sendEventComplete = async (jobId, outputFilePath) => {
+  const res = await ebClient.send(
+    new PutEventsCommand({
+      Entries: [
+        {
+          Source: 'aws.mediaconvert',
+          DetailType: 'MediaConvert Job State Change',
+          Resources: [`arn:aws:mediaconvert:us-east-1:000000000000:jobs/${jobId}`],
+          Detail: JSON.stringify({
+            timestamp: Date.now(),
+            queue: 'arn:aws:mediaconvert:us-east-1:000000000000:queues/Default',
+            jobId: jobId,
+            status: 'COMPLETE',
+            userMetadata: {},
+            warnings: [
+              {
+                code: '000000',
+                count: 1,
+              },
+            ],
+            outputGroupDetails: [
+              {
+                outputDetails: [
+                  {
+                    outputFilePaths: [outputFilePath],
+                    durationInMs: 30041,
+                    videoDetails: {
+                      widthInPx: 1920,
+                      heightInPx: 1080,
+                      qvbrAvgQuality: 7.38,
+                      qvbrMinQuality: 7,
+                      qvbrMaxQuality: 8,
+                      qvbrMinQualityLocation: 2168,
+                      qvbrMaxQualityLocation: 25025,
+                    },
+                  },
+                ],
+                type: 'FILE_GROUP',
+              },
+            ],
+            paddingInserted: 0,
+            blackVideoDetected: 10,
+            blackSegments: [
+              {
+                start: 0,
+                end: 10,
+              },
+            ],
+          }),
+        },
+      ],
+    }),
+  );
+  console.log(res);
+};
+
+const app = express();
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// log requests
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const logData = {
+      method: req.method,
+      url: req.url,
+      status: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip,
+      userAgent: req.get('User-Agent'),
+    };
+
+    if (res.statusCode >= 400) {
+      console.error('HTTP Request', logData);
+    } else {
+      console.log('HTTP Request', logData);
+    }
+  });
+
+  next();
+});
+
+app.post('/2017-08-29/jobs', async (req, res) => {
+  const jobId = genJobId();
+
+  await sendEventError(jobId, 1040, 'Some error');
+
+  return res.status(201).json({
+    Job: getJobJson(jobId),
+  });
+});
+
+const port = process.env.HTTP_PORT || '3000';
+const server = app.listen(parseInt(port), () => {
+  console.log(`API service started on port ${port}`);
+});

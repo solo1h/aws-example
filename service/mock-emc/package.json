@@ -1,10 +1,10 @@
 {
-  "name": "api-service",
+  "name": "mock-emc",
   "version": "1.0.0",
-  "description": "Upload API for Async Video Processing Service",
+  "description": "Silly mock of AWS EMC",
   "main": "index.js",
   "scripts": {
-    "build": "docker image rm api-service; docker build -t api-service .",
+    "build": "docker image rm mock-emc; docker build -t mock-emc .",
     "test": "jest",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix",
@@ -21,13 +21,7 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.890.0",
-    "@aws-sdk/s3-request-presigner": "^3.890.0",
-    "express": "^5.1.0",
-    "pg": "^8.16.3",
-    "postgres-migrations": "^5.3.0",
-    "uuid": "^13.0.0",
-    "winston": "^3.17.0",
-    "zod": "^4.1.8"
+    "@aws-sdk/client-eventbridge": "^3.893.0",
+    "express": "^5.1.0"
   }
 }

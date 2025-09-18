@@ -1,10 +1,10 @@
 {
-  "name": "api-service",
+  "name": "aws-ems-event",
   "version": "1.0.0",
-  "description": "Upload API for Async Video Processing Service",
+  "description": "AWS MediaConvert event lambda for Async Video Processing Service",
   "main": "index.js",
   "scripts": {
-    "build": "docker image rm api-service; docker build -t api-service .",
+    "build": "npm ci --only=production && npm cache clean --force && zip -r emsEvent.zip index.js node_modules",
     "test": "jest",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix",
@@ -12,7 +12,7 @@
   },
   "author": "solo1h",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
@@ -21,13 +21,6 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.890.0",
-    "@aws-sdk/s3-request-presigner": "^3.890.0",
-    "express": "^5.1.0",
-    "pg": "^8.16.3",
-    "postgres-migrations": "^5.3.0",
-    "uuid": "^13.0.0",
-    "winston": "^3.17.0",
-    "zod": "^4.1.8"
+    "pg": "^8.16.3"
   }
 }
