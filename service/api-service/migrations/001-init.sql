@@ -2,15 +2,17 @@
 CREATE TABLE jobs (
     job_id UUID PRIMARY KEY,
     status VARCHAR(20) NOT NULL CHECK (status IN ('WAITING_FOR_UPLOAD', 'QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED')) DEFAULT 'WAITING_FOR_UPLOAD',
-    input_key TEXT,
-    input_path TEXT DEFAULT '',
-    output_path TEXT DEFAULT '',
+    input TEXT,
+    output TEXT DEFAULT '',
     output_cdn_url TEXT DEFAULT '',
     mc_job_id VARCHAR(255)  DEFAULT '',
     error_message TEXT DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Index for efficient jobs queries
+CREATE INDEX idx_jobs_ids ON jobs(job_id);
 
 -- Index for efficient status queries
 CREATE INDEX idx_jobs_status ON jobs(status);

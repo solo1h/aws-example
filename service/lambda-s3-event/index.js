@@ -28,7 +28,7 @@ const dbUpdateJob = async (key, jobId) => {
     UPDATE jobs
     SET 
       status = 'QUEUED',
-      input_path = $1,
+      input = $1,
       mc_job_id = $2
     WHERE job_id = $3
   `

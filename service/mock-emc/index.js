@@ -1,17 +1,4 @@
 import express from 'express';
-import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
-
-const awsConfig = { // FIXME
-  endpoint: 'http://localstack:4566',
-  region: 'us-east-1',
-  credentials: {
-    accessKeyId: 'test',
-    secretAccessKey: 'test',
-  },
-  forcePathStyle: true,
-  sslEnabled: false,
-};
-const ebClient = new EventBridgeClient(awsConfig);
 
 const genJobId = () => {
   const id =  Array.from({ length: 8 }, () =>
@@ -1211,91 +1198,12 @@ const getJobJson = jobId => {
   };
 };
 
-const sendEventError = async (jobId, code, msg) => {
-  const res = await ebClient.send(
-    new PutEventsCommand({
-      Entries: [
-        {
-          Source: 'aws.mediaconvert',
-          DetailType: 'MediaConvert Job State Change',
-          Resources: [`arn:aws:mediaconvert:us-east-1:000000000000:jobs/${jobId}`],
-          Detail: JSON.stringify({
-            timestamp: Date.now(),
-            queue: 'arn:aws:mediaconvert:us-east-1:000000000000:queues/Default',
-            jobId: jobId,
-            status: 'ERROR',
-            errorCode: code,
-            errorMessage: msg,
-          }),
-        },
-      ],
-    }),
-  );
-  console.log(res);
-};
-
-const sendEventComplete = async (jobId, outputFilePath) => {
-  const res = await ebClient.send(
-    new PutEventsCommand({
-      Entries: [
-        {
-          Source: 'aws.mediaconvert',
-          DetailType: 'MediaConvert Job State Change',
-          Resources: [`arn:aws:mediaconvert:us-east-1:000000000000:jobs/${jobId}`],
-          Detail: JSON.stringify({
-            timestamp: Date.now(),
-            queue: 'arn:aws:mediaconvert:us-east-1:000000000000:queues/Default',
-            jobId: jobId,
-            status: 'COMPLETE',
-            userMetadata: {},
-            warnings: [
-              {
-                code: '000000',
-                count: 1,
-              },
-            ],
-            outputGroupDetails: [
-              {
-                outputDetails: [
-                  {
-                    outputFilePaths: [outputFilePath],
-                    durationInMs: 30041,
-                    videoDetails: {
-                      widthInPx: 1920,
-                      heightInPx: 1080,
-                      qvbrAvgQuality: 7.38,
-                      qvbrMinQuality: 7,
-                      qvbrMaxQuality: 8,
-                      qvbrMinQualityLocation: 2168,
-                      qvbrMaxQualityLocation: 25025,
-                    },
-                  },
-                ],
-                type: 'FILE_GROUP',
-              },
-            ],
-            paddingInserted: 0,
-            blackVideoDetected: 10,
-            blackSegments: [
-              {
-                start: 0,
-                end: 10,
-              },
-            ],
-          }),
-        },
-      ],
-    }),
-  );
-  console.log(res);
-};
-
 const app = express();
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// log requests
+// logging
 app.use((req, res, next) => {
   const start = Date.now();
 
@@ -1323,14 +1231,12 @@ app.use((req, res, next) => {
 app.post('/2017-08-29/jobs', async (req, res) => {
   const jobId = genJobId();
 
-  await sendEventError(jobId, 1040, 'Some error');
-
   return res.status(201).json({
     Job: getJobJson(jobId),
   });
 });
 
 const port = process.env.HTTP_PORT || '3000';
-const server = app.listen(parseInt(port), () => {
+app.listen(parseInt(port), () => {
   console.log(`API service started on port ${port}`);
 });

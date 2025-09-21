@@ -133,6 +133,10 @@ export class UploadApiService {
         res.status(200).json({
           job_id: job.job_id,
           status: job.status,
+          input: job.input,
+          output: job.output || null,
+          output_cdn: job.output_cdn_url || null,
+          mc_job_id: job.mc_job_id || null,
           error_message: job.error_message || null,
           updated_at: job.updated_at,
         });
@@ -189,7 +193,7 @@ export class UploadApiService {
       try {
         const jobId = uuid.v4();
         const fname = 'foobar';
-        // TODO: parse body
+        // FIXME: parse body
         // . get fname
         // . get metadata
 

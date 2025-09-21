@@ -1,0 +1,11 @@
+certs/
+dist/
+node_modules/
+scripts/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+*.min.js
+*.min.css
+*.zip

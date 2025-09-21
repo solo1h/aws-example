@@ -78,7 +78,7 @@ export class Jobs {
   }
 
   async register(job_id, input_key) {
-    const query = 'INSERT INTO jobs (job_id, input_key) VALUES ($1, $2)';
+    const query = 'INSERT INTO jobs (job_id, input) VALUES ($1, $2)';
     const values = [job_id, input_key];
 
     try {
@@ -163,8 +163,8 @@ export class Jobs {
     }
   }
 
-  async updateStatus(jobId, updates) {
-    const allowedFields = ['status', 'output_path', 'output_cdn_url', 'mc_job_id', 'error_message'];
+  async updateJob(jobId, updates) {
+    const allowedFields = ['status', 'output', 'output_cdn_url', 'mc_job_id', 'error_message'];
     const updateFields = [];
     const values = [];
     let paramCount = 0;
