@@ -1,36 +1,36 @@
-import { config } from './src/utils/config.js';
-import { logger, die } from './src/utils/logger.js';
-import { runMigrations } from './src/utils/db.js';
-import { runService } from './src/serveice.js';
+import { config } from './src/config.js'
+import { logger, die } from './src/logger.js'
+import { runMigrations } from './src/db.js'
+import { runService } from './src/serveice.js'
 
 const RunMode = {
   init: runMigrations,
-  serve: runService,
-};
-
-function parseCliCommand() {
-  const args = process.argv.slice(2);
-  if (args.length != 1) {
-    die(`Expected 1 CLI argument, but ${args.length} is given.`);
-  }
-
-  const command = args[0];
-  if (!Object.keys(RunMode).includes(command)) {
-    die(`Expected command 'init' or 'serve', but '${command}' is given.`);
-  }
-
-  return command;
+  serve: runService
 }
 
-async function run() {
-  const log = logger.child({ service: config.serviceName });
-  log.info(`Start service`);
+function parseCliCommand () {
+  const args = process.argv.slice(2)
+  if (args.length !== 1) {
+    die(`Expected 1 CLI argument, but ${args.length} is given.`)
+  }
+
+  const command = args[0]
+  if (!Object.keys(RunMode).includes(command)) {
+    die(`Expected command 'init' or 'serve', but '${command}' is given.`)
+  }
+
+  return command
+}
+
+async function run () {
+  const log = logger.child({ service: config.service.name })
+  log.info('Start service')
 
   try {
-    await RunMode[parseCliCommand()](config, log);
+    await RunMode[parseCliCommand()](config, log)
   } catch (err) {
-    die(err);
+    die(err)
   }
 }
 
-await run();
+await run()

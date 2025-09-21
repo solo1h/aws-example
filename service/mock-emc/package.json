@@ -5,19 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "docker image rm mock-emc; docker build -t mock-emc .",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix",
-    "format": "prettier --write ."
+    "format": "standard --fix"
   },
   "author": "solo1h",
   "license": "MIT",
   "type": "module",
   "devDependencies": {
-    "eslint": "^9.35.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "globals": "^16.4.0",
-    "prettier": "^3.6.2"
+    "standard": "^17.1.2"
   },
   "dependencies": {
     "express": "^5.1.0"

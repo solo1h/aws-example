@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm ci --only=production && npm cache clean --force && zip -r s3event.zip index.js node_modules",
-    "test": "jest",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix",
-    "format": "prettier --write ."
+    "format": "standard --fix"
   },
   "author": "solo1h",
   "license": "MIT",
@@ -18,7 +15,8 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^16.4.0",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "standard": "^17.1.2"
   },
   "dependencies": {
     "@aws-sdk/client-mediaconvert": "^3.891.0",

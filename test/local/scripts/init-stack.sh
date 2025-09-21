@@ -49,7 +49,7 @@ aws lambda create-function \
   --runtime nodejs22.x \
   --role arn:aws:iam::000000000000:role/lambda-role \
   --handler index.handler \
-  --zip-file fileb://emsEvent.zip \
+  --zip-file fileb://emcEvent.zip \
   --timeout 30 \
   --memory-size 128
 

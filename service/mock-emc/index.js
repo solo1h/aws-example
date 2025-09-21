@@ -1,17 +1,17 @@
-import express from 'express';
+import express from 'express'
 
 const genJobId = () => {
-  const id =  Array.from({ length: 8 }, () =>
+  const id = Array.from({ length: 8 }, () =>
     'abcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 36))
-  ).join('');
+  ).join('')
   return `${Date.now()}-${id}`
-};
+}
 
 const getJobJson = jobId => {
-  const timestamp = new Date().toString();
+  const timestamp = new Date().toString()
   return {
     AccelerationSettings: {
-      Mode: '',
+      Mode: ''
     },
     AccelerationStatus: '',
     Arn: '',
@@ -24,15 +24,15 @@ const getJobJson = jobId => {
       {
         Priority: 5744,
         Queue: '',
-        WaitMinutes: 13955,
-      },
+        WaitMinutes: 13955
+      }
     ],
     Id: `${jobId}`,
     JobPercentComplete: 98886,
     JobTemplate: '',
     Messages: {
       Info: [''],
-      Warning: [''],
+      Warning: ['']
     },
     OutputGroupDetails: [
       {
@@ -41,11 +41,11 @@ const getJobJson = jobId => {
             DurationInMs: 85350,
             VideoDetails: {
               HeightInPx: 13782,
-              WidthInPx: 85489,
-            },
-          },
-        ],
-      },
+              WidthInPx: 85489
+            }
+          }
+        ]
+      }
     ],
     Priority: 41708,
     Queue: '',
@@ -53,28 +53,28 @@ const getJobJson = jobId => {
       {
         DestinationQueue: '',
         SourceQueue: '',
-        Timestamp: timestamp,
-      },
+        Timestamp: timestamp
+      }
     ],
     RetryCount: 97162,
     Role: '',
     Settings: {
       AdAvailOffset: 77904,
       AvailBlanking: {
-        AvailBlankingImage: '',
+        AvailBlankingImage: ''
       },
       Esam: {
         ManifestConfirmConditionNotification: {
-          MccXml: '',
+          MccXml: ''
         },
         ResponseSignalPreroll: 64275,
         SignalProcessingNotification: {
-          SccXml: '',
-        },
+          SccXml: ''
+        }
       },
       ExtendedDataServices: {
         CopyProtectionAction: '',
-        VchipAction: '',
+        VchipAction: ''
       },
       Inputs: [
         {
@@ -85,14 +85,14 @@ const getJobJson = jobId => {
             Height: 22222,
             Width: 50516,
             X: 60976,
-            Y: 20176,
+            Y: 20176
           },
           DeblockFilter: '',
           DecryptionSettings: {
             DecryptionMode: '',
             EncryptedDecryptionKey: '',
             InitializationVector: '',
-            KmsKeyRegion: '',
+            KmsKeyRegion: ''
           },
           DenoiseFilter: '',
           FileInput: '',
@@ -111,22 +111,22 @@ const getJobJson = jobId => {
                 Layer: 80159,
                 Opacity: 98774,
                 StartTime: '',
-                Width: 14820,
-              },
-            ],
+                Width: 14820
+              }
+            ]
           },
           InputClippings: [
             {
               EndTimecode: '',
-              StartTimecode: '',
-            },
+              StartTimecode: ''
+            }
           ],
           InputScanType: '',
           Position: {
             Height: 11791,
             Width: 61811,
             X: 10909,
-            Y: 89001,
+            Y: 89001
           },
           ProgramNumber: 65325,
           PsiControl: '',
@@ -149,14 +149,14 @@ const getJobJson = jobId => {
               RedPrimaryX: 38221,
               RedPrimaryY: 13677,
               WhitePointX: 25717,
-              WhitePointY: 49102,
+              WhitePointY: 49102
             },
             Pid: 94366,
             ProgramNumber: 86918,
             Rotate: '',
-            SampleRange: '',
-          },
-        },
+            SampleRange: ''
+          }
+        }
       ],
       KantarWatermark: {
         ChannelName: '',
@@ -171,25 +171,25 @@ const getJobJson = jobId => {
         Metadata5: '',
         Metadata6: '',
         Metadata7: '',
-        Metadata8: '',
+        Metadata8: ''
       },
       MotionImageInserter: {
         Framerate: {
           FramerateDenominator: 62909,
-          FramerateNumerator: 79981,
+          FramerateNumerator: 79981
         },
         Input: '',
         InsertionMode: '',
         Offset: {
           ImageX: 10894,
-          ImageY: 4527,
+          ImageY: 4527
         },
         Playback: '',
-        StartTime: '',
+        StartTime: ''
       },
       NielsenConfiguration: {
         BreakoutCode: 66888,
-        DistributorId: '',
+        DistributorId: ''
       },
       NielsenNonLinearWatermark: {
         ActiveWatermarkProcess: '',
@@ -202,7 +202,7 @@ const getJobJson = jobId => {
         SourceId: 26946,
         SourceWatermarkStatus: '',
         TicServerUrl: '',
-        UniqueTicPerAudioTrack: '',
+        UniqueTicPerAudioTrack: ''
       },
       OutputGroups: [
         {
@@ -210,8 +210,8 @@ const getJobJson = jobId => {
             AbrSettings: {
               MaxAbrBitrate: 3158,
               MaxRenditions: 44647,
-              MinAbrBitrate: 60665,
-            },
+              MinAbrBitrate: 60665
+            }
           },
           CustomName: '',
           Name: '',
@@ -220,8 +220,8 @@ const getJobJson = jobId => {
               AdditionalManifests: [
                 {
                   ManifestNameModifier: '',
-                  SelectedOutputs: [''],
-                },
+                  SelectedOutputs: ['']
+                }
               ],
               BaseUrl: '',
               ClientCache: '',
@@ -230,14 +230,14 @@ const getJobJson = jobId => {
               DestinationSettings: {
                 S3Settings: {
                   AccessControl: {
-                    CannedAcl: '',
+                    CannedAcl: ''
                   },
                   Encryption: {
                     EncryptionType: '',
                     KmsEncryptionContext: '',
-                    KmsKeyArn: '',
-                  },
-                },
+                    KmsKeyArn: ''
+                  }
+                }
               },
               Encryption: {
                 ConstantInitializationVector: '',
@@ -248,15 +248,15 @@ const getJobJson = jobId => {
                   DashSignaledSystemIds: [''],
                   HlsSignaledSystemIds: [''],
                   ResourceId: '',
-                  Url: '',
+                  Url: ''
                 },
                 StaticKeyProvider: {
                   KeyFormat: '',
                   KeyFormatVersions: '',
                   StaticKeyValue: '',
-                  Url: '',
+                  Url: ''
                 },
-                Type: '',
+                Type: ''
               },
               FragmentLength: 40369,
               ImageBasedTrickPlay: '',
@@ -273,14 +273,14 @@ const getJobJson = jobId => {
               TargetDurationCompatibilityMode: '',
               WriteDashManifest: '',
               WriteHlsManifest: '',
-              WriteSegmentTimelineInRepresentation: '',
+              WriteSegmentTimelineInRepresentation: ''
             },
             DashIsoGroupSettings: {
               AdditionalManifests: [
                 {
                   ManifestNameModifier: '',
-                  SelectedOutputs: [''],
-                },
+                  SelectedOutputs: ['']
+                }
               ],
               AudioChannelConfigSchemeIdUri: '',
               BaseUrl: '',
@@ -288,14 +288,14 @@ const getJobJson = jobId => {
               DestinationSettings: {
                 S3Settings: {
                   AccessControl: {
-                    CannedAcl: '',
+                    CannedAcl: ''
                   },
                   Encryption: {
                     EncryptionType: '',
                     KmsEncryptionContext: '',
-                    KmsKeyArn: '',
-                  },
-                },
+                    KmsKeyArn: ''
+                  }
+                }
               },
               Encryption: {
                 PlaybackDeviceCompatibility: '',
@@ -303,8 +303,8 @@ const getJobJson = jobId => {
                   CertificateArn: '',
                   ResourceId: '',
                   SystemIds: [''],
-                  Url: '',
-                },
+                  Url: ''
+                }
               },
               FragmentLength: 42566,
               HbbtvCompliance: '',
@@ -316,30 +316,30 @@ const getJobJson = jobId => {
               SegmentControl: '',
               SegmentLength: 87901,
               SegmentLengthControl: '',
-              WriteSegmentTimelineInRepresentation: '',
+              WriteSegmentTimelineInRepresentation: ''
             },
             FileGroupSettings: {
               Destination: '',
               DestinationSettings: {
                 S3Settings: {
                   AccessControl: {
-                    CannedAcl: '',
+                    CannedAcl: ''
                   },
                   Encryption: {
                     EncryptionType: '',
                     KmsEncryptionContext: '',
-                    KmsKeyArn: '',
-                  },
-                },
-              },
+                    KmsKeyArn: ''
+                  }
+                }
+              }
             },
             HlsGroupSettings: {
               AdMarkers: ['ELEMENTAL_SCTE35'],
               AdditionalManifests: [
                 {
                   ManifestNameModifier: '',
-                  SelectedOutputs: [''],
-                },
+                  SelectedOutputs: ['']
+                }
               ],
               AudioOnlyHeader: '',
               BaseUrl: '',
@@ -348,8 +348,8 @@ const getJobJson = jobId => {
                   CaptionChannel: 37226,
                   CustomLanguageCode: '',
                   LanguageCode: '',
-                  LanguageDescription: '',
-                },
+                  LanguageDescription: ''
+                }
               ],
               CaptionLanguageSetting: '',
               ClientCache: '',
@@ -358,14 +358,14 @@ const getJobJson = jobId => {
               DestinationSettings: {
                 S3Settings: {
                   AccessControl: {
-                    CannedAcl: '',
+                    CannedAcl: ''
                   },
                   Encryption: {
                     EncryptionType: '',
                     KmsEncryptionContext: '',
-                    KmsKeyArn: '',
-                  },
-                },
+                    KmsKeyArn: ''
+                  }
+                }
               },
               DirectoryStructure: '',
               Encryption: {
@@ -377,15 +377,15 @@ const getJobJson = jobId => {
                   CertificateArn: '',
                   ResourceId: '',
                   SystemIds: [''],
-                  Url: '',
+                  Url: ''
                 },
                 StaticKeyProvider: {
                   KeyFormat: '',
                   KeyFormatVersions: '',
                   StaticKeyValue: '',
-                  Url: '',
+                  Url: ''
                 },
-                Type: '',
+                Type: ''
               },
               ImageBasedTrickPlay: '',
               ManifestCompression: '',
@@ -403,49 +403,49 @@ const getJobJson = jobId => {
               TargetDurationCompatibilityMode: '',
               TimedMetadataId3Frame: '',
               TimedMetadataId3Period: 29841,
-              TimestampDeltaMilliseconds: 93557,
+              TimestampDeltaMilliseconds: 93557
             },
             MsSmoothGroupSettings: {
               AdditionalManifests: [
                 {
                   ManifestNameModifier: '',
-                  SelectedOutputs: [''],
-                },
+                  SelectedOutputs: ['']
+                }
               ],
               AudioDeduplication: '',
               Destination: '',
               DestinationSettings: {
                 S3Settings: {
                   AccessControl: {
-                    CannedAcl: '',
+                    CannedAcl: ''
                   },
                   Encryption: {
                     EncryptionType: '',
                     KmsEncryptionContext: '',
-                    KmsKeyArn: '',
-                  },
-                },
+                    KmsKeyArn: ''
+                  }
+                }
               },
               Encryption: {
                 SpekeKeyProvider: {
                   CertificateArn: '',
                   ResourceId: '',
                   SystemIds: [''],
-                  Url: '',
-                },
+                  Url: ''
+                }
               },
               FragmentLength: 23450,
               FragmentLengthControl: '',
-              ManifestEncoding: '',
+              ManifestEncoding: ''
             },
-            Type: '',
+            Type: ''
           },
           Outputs: [
             {
               AudioDescriptions: [
                 {
                   AudioChannelTaggingSettings: {
-                    ChannelTag: '',
+                    ChannelTag: ''
                   },
                   AudioNormalizationSettings: {
                     Algorithm: '',
@@ -453,7 +453,7 @@ const getJobJson = jobId => {
                     CorrectionGateLevel: 96230,
                     LoudnessLogging: '',
                     PeakCalculation: '',
-                    TargetLkfs: 0.819970360675306,
+                    TargetLkfs: 0.819970360675306
                   },
                   AudioSourceName: '',
                   AudioType: 57383,
@@ -468,7 +468,7 @@ const getJobJson = jobId => {
                       RawFormat: '',
                       SampleRate: 81934,
                       Specification: '',
-                      VbrQuality: '',
+                      VbrQuality: ''
                     },
                     Ac3Settings: {
                       Bitrate: 13798,
@@ -480,12 +480,12 @@ const getJobJson = jobId => {
                       DynamicRangeCompressionRf: '',
                       LfeFilter: '',
                       MetadataControl: '',
-                      SampleRate: 53510,
+                      SampleRate: 53510
                     },
                     AiffSettings: {
                       BitDepth: 92653,
                       Channels: 1019,
-                      SampleRate: 44471,
+                      SampleRate: 44471
                     },
                     Codec: '',
                     Eac3AtmosSettings: {
@@ -505,7 +505,7 @@ const getJobJson = jobId => {
                       SampleRate: 67059,
                       SpeechThreshold: 39201,
                       StereoDownmix: '',
-                      SurroundExMode: '',
+                      SurroundExMode: ''
                     },
                     Eac3Settings: {
                       AttenuationControl: '',
@@ -528,36 +528,36 @@ const getJobJson = jobId => {
                       SampleRate: 28327,
                       StereoDownmix: '',
                       SurroundExMode: '',
-                      SurroundMode: '',
+                      SurroundMode: ''
                     },
                     Mp2Settings: {
                       Bitrate: 35297,
                       Channels: 91474,
-                      SampleRate: 34235,
+                      SampleRate: 34235
                     },
                     Mp3Settings: {
                       Bitrate: 15743,
                       Channels: 53821,
                       RateControlMode: '',
                       SampleRate: 14205,
-                      VbrQuality: 20520,
+                      VbrQuality: 20520
                     },
                     OpusSettings: {
                       Bitrate: 58753,
                       Channels: 43456,
-                      SampleRate: 33075,
+                      SampleRate: 33075
                     },
                     VorbisSettings: {
                       Channels: 94666,
                       SampleRate: 64660,
-                      VbrQuality: 13989,
+                      VbrQuality: 13989
                     },
                     WavSettings: {
                       BitDepth: 73709,
                       Channels: 89019,
                       Format: '',
-                      SampleRate: 9410,
-                    },
+                      SampleRate: 9410
+                    }
                   },
                   CustomLanguageCode: '',
                   LanguageCode: '',
@@ -567,15 +567,15 @@ const getJobJson = jobId => {
                       OutputChannels: [
                         {
                           InputChannels: [91877],
-                          InputChannelsFineTune: [0.8688395750977074],
-                        },
-                      ],
+                          InputChannelsFineTune: [0.8688395750977074]
+                        }
+                      ]
                     },
                     ChannelsIn: 34832,
-                    ChannelsOut: 41466,
+                    ChannelsOut: 41466
                   },
-                  StreamName: '',
-                },
+                  StreamName: ''
+                }
               ],
               CaptionDescriptions: [
                 {
@@ -599,7 +599,7 @@ const getJobJson = jobId => {
                       ShadowYOffset: 92555,
                       TeletextSpacing: '',
                       XPosition: 43179,
-                      YPosition: 48393,
+                      YPosition: 48393
                     },
                     DestinationType: '',
                     DvbSubDestinationSettings: {
@@ -625,35 +625,35 @@ const getJobJson = jobId => {
                       TeletextSpacing: '',
                       Width: 38151,
                       XPosition: 24084,
-                      YPosition: 38141,
+                      YPosition: 38141
                     },
                     EmbeddedDestinationSettings: {
                       Destination608ChannelNumber: 80243,
-                      Destination708ServiceNumber: 46848,
+                      Destination708ServiceNumber: 46848
                     },
                     ImscDestinationSettings: {
-                      StylePassthrough: '',
+                      StylePassthrough: ''
                     },
                     SccDestinationSettings: {
-                      Framerate: '',
+                      Framerate: ''
                     },
                     SrtDestinationSettings: {
-                      StylePassthrough: '',
+                      StylePassthrough: ''
                     },
                     TeletextDestinationSettings: {
                       PageNumber: '',
-                      PageTypes: ['PAGE_TYPE_HEARING_IMPAIRED_SUBTITLE'],
+                      PageTypes: ['PAGE_TYPE_HEARING_IMPAIRED_SUBTITLE']
                     },
                     TtmlDestinationSettings: {
-                      StylePassthrough: '',
+                      StylePassthrough: ''
                     },
                     WebvttDestinationSettings: {
-                      StylePassthrough: '',
-                    },
+                      StylePassthrough: ''
+                    }
                   },
                   LanguageCode: '',
-                  LanguageDescription: '',
-                },
+                  LanguageDescription: ''
+                }
               ],
               ContainerSettings: {
                 CmfcSettings: {
@@ -664,11 +664,11 @@ const getJobJson = jobId => {
                   DescriptiveVideoServiceFlag: '',
                   IFrameOnlyManifest: '',
                   Scte35Esam: '',
-                  Scte35Source: '',
+                  Scte35Source: ''
                 },
                 Container: '',
                 F4vSettings: {
-                  MoovPlacement: '',
+                  MoovPlacement: ''
                 },
                 M2tsSettings: {
                   AudioBufferModel: '',
@@ -681,17 +681,17 @@ const getJobJson = jobId => {
                   DvbNitSettings: {
                     NetworkId: 42841,
                     NetworkName: '',
-                    NitInterval: 1412,
+                    NitInterval: 1412
                   },
                   DvbSdtSettings: {
                     OutputSdt: '',
                     SdtInterval: 65747,
                     ServiceName: '',
-                    ServiceProviderName: '',
+                    ServiceProviderName: ''
                   },
                   DvbSubPids: [16095],
                   DvbTdtSettings: {
-                    TdtInterval: 20603,
+                    TdtInterval: 20603
                   },
                   DvbTeletextPid: 96396,
                   EbpAudioInterval: '',
@@ -712,7 +712,7 @@ const getJobJson = jobId => {
                   ProgramNumber: 54865,
                   RateMode: '',
                   Scte35Esam: {
-                    Scte35EsamPid: 94720,
+                    Scte35EsamPid: 94720
                   },
                   Scte35Pid: 59469,
                   Scte35Source: '',
@@ -721,7 +721,7 @@ const getJobJson = jobId => {
                   SegmentationTime: 0.4807643074199298,
                   TimedMetadataPid: 87494,
                   TransportStreamId: 12528,
-                  VideoPid: 16626,
+                  VideoPid: 16626
                 },
                 M3u8Settings: {
                   AudioDuration: '',
@@ -742,14 +742,14 @@ const getJobJson = jobId => {
                   TimedMetadata: '',
                   TimedMetadataPid: 73292,
                   TransportStreamId: 87646,
-                  VideoPid: 3347,
+                  VideoPid: 3347
                 },
                 MovSettings: {
                   ClapAtom: '',
                   CslgAtom: '',
                   Mpeg2FourCCControl: '',
                   PaddingControl: '',
-                  Reference: '',
+                  Reference: ''
                 },
                 Mp4Settings: {
                   AudioDuration: '',
@@ -757,23 +757,23 @@ const getJobJson = jobId => {
                   CttsVersion: 54194,
                   FreeSpaceBox: '',
                   MoovPlacement: '',
-                  Mp4MajorBrand: '',
+                  Mp4MajorBrand: ''
                 },
                 MpdSettings: {
                   AccessibilityCaptionHints: '',
                   AudioDuration: '',
                   CaptionContainerType: '',
                   Scte35Esam: '',
-                  Scte35Source: '',
+                  Scte35Source: ''
                 },
                 MxfSettings: {
                   AfdSignaling: '',
                   Profile: '',
                   XavcProfileSettings: {
                     DurationMode: '',
-                    MaxAncDataSize: 52070,
-                  },
-                },
+                    MaxAncDataSize: 52070
+                  }
+                }
               },
               Extension: '',
               NameModifier: '',
@@ -785,8 +785,8 @@ const getJobJson = jobId => {
                   AudioTrackType: '',
                   DescriptiveVideoServiceFlag: '',
                   IFrameOnlyManifest: '',
-                  SegmentModifier: '',
-                },
+                  SegmentModifier: ''
+                }
               },
               Preset: '',
               VideoDescription: {
@@ -804,16 +804,16 @@ const getJobJson = jobId => {
                     NumberBFramesBetweenReferenceFrames: 72120,
                     QvbrSettings: {
                       QvbrQualityLevel: 51784,
-                      QvbrQualityLevelFineTune: 0.8347282590639021,
+                      QvbrQualityLevelFineTune: 0.8347282590639021
                     },
                     RateControlMode: '',
                     Slices: 20823,
-                    SpatialAdaptiveQuantization: '',
+                    SpatialAdaptiveQuantization: ''
                   },
                   AvcIntraSettings: {
                     AvcIntraClass: '',
                     AvcIntraUhdSettings: {
-                      QualityTuningLevel: '',
+                      QualityTuningLevel: ''
                     },
                     FramerateControl: '',
                     FramerateConversionAlgorithm: '',
@@ -822,14 +822,14 @@ const getJobJson = jobId => {
                     InterlaceMode: '',
                     ScanTypeConversionMode: '',
                     SlowPal: '',
-                    Telecine: '',
+                    Telecine: ''
                   },
                   Codec: '',
                   FrameCaptureSettings: {
                     FramerateDenominator: 36525,
                     FramerateNumerator: 4438,
                     MaxCaptures: 30477,
-                    Quality: 56853,
+                    Quality: 56853
                   },
                   H264Settings: {
                     AdaptiveQuantization: '',
@@ -862,7 +862,7 @@ const getJobJson = jobId => {
                     QvbrSettings: {
                       MaxAverageBitrate: 32835,
                       QvbrQualityLevel: 46034,
-                      QvbrQualityLevelFineTune: 0.8542660018400587,
+                      QvbrQualityLevelFineTune: 0.8542660018400587
                     },
                     RateControlMode: '',
                     RepeatPps: '',
@@ -875,7 +875,7 @@ const getJobJson = jobId => {
                     Syntax: '',
                     Telecine: '',
                     TemporalAdaptiveQuantization: '',
-                    UnregisteredSeiTimecode: '',
+                    UnregisteredSeiTimecode: ''
                   },
                   H265Settings: {
                     AdaptiveQuantization: '',
@@ -907,7 +907,7 @@ const getJobJson = jobId => {
                     QvbrSettings: {
                       MaxAverageBitrate: 20681,
                       QvbrQualityLevel: 34744,
-                      QvbrQualityLevelFineTune: 0.11295514112323968,
+                      QvbrQualityLevelFineTune: 0.11295514112323968
                     },
                     RateControlMode: '',
                     SampleAdaptiveOffsetFilterMode: '',
@@ -921,7 +921,7 @@ const getJobJson = jobId => {
                     TemporalIds: '',
                     Tiles: '',
                     UnregisteredSeiTimecode: '',
-                    WriteMp4PackagingType: '',
+                    WriteMp4PackagingType: ''
                   },
                   Mpeg2Settings: {
                     AdaptiveQuantization: '',
@@ -955,7 +955,7 @@ const getJobJson = jobId => {
                     SpatialAdaptiveQuantization: '',
                     Syntax: '',
                     Telecine: '',
-                    TemporalAdaptiveQuantization: '',
+                    TemporalAdaptiveQuantization: ''
                   },
                   ProresSettings: {
                     ChromaSampling: '',
@@ -970,7 +970,7 @@ const getJobJson = jobId => {
                     ParNumerator: 73924,
                     ScanTypeConversionMode: '',
                     SlowPal: '',
-                    Telecine: '',
+                    Telecine: ''
                   },
                   Vc3Settings: {
                     FramerateControl: '',
@@ -981,7 +981,7 @@ const getJobJson = jobId => {
                     ScanTypeConversionMode: '',
                     SlowPal: '',
                     Telecine: '',
-                    Vc3Class: '',
+                    Vc3Class: ''
                   },
                   Vp8Settings: {
                     Bitrate: 47339,
@@ -996,7 +996,7 @@ const getJobJson = jobId => {
                     ParDenominator: 36338,
                     ParNumerator: 51494,
                     QualityTuningLevel: '',
-                    RateControlMode: '',
+                    RateControlMode: ''
                   },
                   Vp9Settings: {
                     Bitrate: 87800,
@@ -1011,7 +1011,7 @@ const getJobJson = jobId => {
                     ParDenominator: 69451,
                     ParNumerator: 25006,
                     QualityTuningLevel: '',
-                    RateControlMode: '',
+                    RateControlMode: ''
                   },
                   XavcSettings: {
                     AdaptiveQuantization: '',
@@ -1026,10 +1026,10 @@ const getJobJson = jobId => {
                     SpatialAdaptiveQuantization: '',
                     TemporalAdaptiveQuantization: '',
                     Xavc4kIntraCbgProfileSettings: {
-                      XavcClass: '',
+                      XavcClass: ''
                     },
                     Xavc4kIntraVbrProfileSettings: {
-                      XavcClass: '',
+                      XavcClass: ''
                     },
                     Xavc4kProfileSettings: {
                       BitrateClass: '',
@@ -1039,10 +1039,10 @@ const getJobJson = jobId => {
                       GopClosedCadence: 55527,
                       HrdBufferSize: 8697,
                       QualityTuningLevel: '',
-                      Slices: 68085,
+                      Slices: 68085
                     },
                     XavcHdIntraCbgProfileSettings: {
-                      XavcClass: '',
+                      XavcClass: ''
                     },
                     XavcHdProfileSettings: {
                       BitrateClass: '',
@@ -1053,16 +1053,16 @@ const getJobJson = jobId => {
                       InterlaceMode: '',
                       QualityTuningLevel: '',
                       Slices: 47013,
-                      Telecine: '',
-                    },
-                  },
+                      Telecine: ''
+                    }
+                  }
                 },
                 ColorMetadata: '',
                 Crop: {
                   Height: 91456,
                   Width: 68000,
                   X: 34727,
-                  Y: 60765,
+                  Y: 60765
                 },
                 DropFrameTimecode: '',
                 FixedAfd: 86270,
@@ -1071,7 +1071,7 @@ const getJobJson = jobId => {
                   Height: 59696,
                   Width: 53185,
                   X: 90178,
-                  Y: 16909,
+                  Y: 16909
                 },
                 RespondToAfd: '',
                 ScalingBehavior: '',
@@ -1094,28 +1094,28 @@ const getJobJson = jobId => {
                       RedPrimaryX: 70696,
                       RedPrimaryY: 53568,
                       WhitePointX: 42691,
-                      WhitePointY: 28142,
+                      WhitePointY: 28142
                     },
                     Hue: 63218,
                     SampleRangeConversion: '',
-                    Saturation: 79104,
+                    Saturation: 79104
                   },
                   Deinterlacer: {
                     Algorithm: '',
                     Control: '',
-                    Mode: '',
+                    Mode: ''
                   },
                   DolbyVision: {
                     L6Metadata: {
                       MaxCll: 57457,
-                      MaxFall: 23250,
+                      MaxFall: 23250
                     },
                     L6Mode: '',
-                    Profile: '',
+                    Profile: ''
                   },
                   Hdr10Plus: {
                     MasteringMonitorNits: 22634,
-                    TargetMonitorNits: 63095,
+                    TargetMonitorNits: 63095
                   },
                   ImageInserter: {
                     InsertableImages: [
@@ -1130,61 +1130,61 @@ const getJobJson = jobId => {
                         Layer: 20957,
                         Opacity: 7539,
                         StartTime: '',
-                        Width: 6856,
-                      },
-                    ],
+                        Width: 6856
+                      }
+                    ]
                   },
                   NoiseReducer: {
                     Filter: '',
                     FilterSettings: {
-                      Strength: 78843,
+                      Strength: 78843
                     },
                     SpatialFilterSettings: {
                       PostFilterSharpenStrength: 19696,
                       Speed: 20049,
-                      Strength: 10278,
+                      Strength: 10278
                     },
                     TemporalFilterSettings: {
                       AggressiveMode: 6508,
                       PostTemporalSharpening: '',
                       Speed: 12441,
-                      Strength: 63532,
-                    },
+                      Strength: 63532
+                    }
                   },
                   PartnerWatermarking: {
                     NexguardFileMarkerSettings: {
                       License: '',
                       Payload: 82739,
                       Preset: '',
-                      Strength: '',
-                    },
+                      Strength: ''
+                    }
                   },
                   TimecodeBurnin: {
                     FontSize: 73364,
                     Position: '',
-                    Prefix: '',
-                  },
+                    Prefix: ''
+                  }
                 },
-                Width: 22922,
-              },
-            },
-          ],
-        },
+                Width: 22922
+              }
+            }
+          ]
+        }
       ],
       TimecodeConfig: {
         Anchor: '',
         Source: '',
         Start: '',
-        TimestampOffset: '',
+        TimestampOffset: ''
       },
       TimedMetadataInsertion: {
         Id3Insertions: [
           {
             Id3: '',
-            Timecode: '',
-          },
-        ],
-      },
+            Timecode: ''
+          }
+        ]
+      }
     },
     SimulateReservedQueue: '',
     Status: '',
@@ -1192,51 +1192,51 @@ const getJobJson = jobId => {
     Timing: {
       FinishTime: timestamp,
       StartTime: timestamp,
-      SubmitTime: timestamp,
+      SubmitTime: timestamp
     },
-    UserMetadata: {},
-  };
-};
+    UserMetadata: {}
+  }
+}
 
-const app = express();
+const app = express()
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true }))
 
 // logging
 app.use((req, res, next) => {
-  const start = Date.now();
+  const start = Date.now()
 
   res.on('finish', () => {
-    const duration = Date.now() - start;
+    const duration = Date.now() - start
     const logData = {
       method: req.method,
       url: req.url,
       status: res.statusCode,
       duration: `${duration}ms`,
       ip: req.ip,
-      userAgent: req.get('User-Agent'),
-    };
+      userAgent: req.get('User-Agent')
+    }
 
     if (res.statusCode >= 400) {
-      console.error('HTTP Request', logData);
+      console.error('HTTP Request', logData)
     } else {
-      console.log('HTTP Request', logData);
+      console.log('HTTP Request', logData)
     }
-  });
+  })
 
-  next();
-});
+  next()
+})
 
 app.post('/2017-08-29/jobs', async (req, res) => {
-  const jobId = genJobId();
+  const jobId = genJobId()
 
   return res.status(201).json({
-    Job: getJobJson(jobId),
-  });
-});
+    Job: getJobJson(jobId)
+  })
+})
 
-const port = process.env.HTTP_PORT || '3000';
+const port = process.env.HTTP_PORT || '3000'
 app.listen(parseInt(port), () => {
-  console.log(`API service started on port ${port}`);
-});
+  console.log(`API service started on port ${port}`)
+})

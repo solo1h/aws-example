@@ -1,0 +1,19 @@
+{
+  "name": "aws-emc-event",
+  "version": "1.0.0",
+  "description": "AWS MediaConvert event lambda for Async Video Processing Service",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm ci --only=production && npm cache clean --force && zip -r emcEvent.zip index.js node_modules",
+    "format": "standard --fix"
+  },
+  "author": "solo1h",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "standard": "^17.1.2"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}

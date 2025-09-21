@@ -12,19 +12,19 @@ test('smoke bad path', async ({ request }) => {
 })
 
 test('smoke new upload', async ({ request }) => {
-  const newUpload = await request.post(`/api/v1/upload-request`, {})
+  const newUpload = await request.post(`/upload-request`, {})
   expect(newUpload.ok()).toBeTruthy()
 })
 
 test('happy path', async ({ request }) => {
   // create a new Job
-  const newUpload = await request.post(`/api/v1/upload-request`, {})
+  const newUpload = await request.post(`/upload-request`, {})
   expect(newUpload.ok()).toBeTruthy()
 
   const { job_id, upload_url } = await newUpload.json()
 
   // test status of new job
-  const newJob = await request.get(`/api/v1/jobs/${job_id!}`)
+  const newJob = await request.get(`/jobs/${job_id!}`)
   expect(newJob.ok()).toBeTruthy()
 
   let jobInfo = await newJob.json()
@@ -40,7 +40,7 @@ test('happy path', async ({ request }) => {
 
   // sleep 3s and get status
   await new Promise((resolve) => setTimeout(resolve, 3000))
-  const queuedJob = await request.get(`/api/v1/jobs/${job_id}`)
+  const queuedJob = await request.get(`/jobs/${job_id}`)
   expect(queuedJob.ok()).toBeTruthy()
   jobInfo = await queuedJob.json()
   expect(jobInfo.status!).toBe('QUEUED')
@@ -48,7 +48,7 @@ test('happy path', async ({ request }) => {
   // send EMC event failed
   await sendEventError(jobInfo.mc_job_id, 1040, 'Some eroor')
   await new Promise((resolve) => setTimeout(resolve, 3000))
-  const failedJob = await request.get(`/api/v1/jobs/${job_id}`)
+  const failedJob = await request.get(`/jobs/${job_id}`)
   expect(failedJob.ok()).toBeTruthy()
   jobInfo = await failedJob.json()
   expect(jobInfo.status!).toBe('FAILED')
@@ -56,7 +56,7 @@ test('happy path', async ({ request }) => {
   // send EMC event complete
   await sendEventComplete(jobInfo.mc_job_id, 'some_output_path')
   await new Promise((resolve) => setTimeout(resolve, 3000))
-  const completeJob = await request.get(`/api/v1/jobs/${job_id}`)
+  const completeJob = await request.get(`/jobs/${job_id}`)
   expect(completeJob.ok()).toBeTruthy()
   jobInfo = await completeJob.json()
   expect(jobInfo.status!).toBe('SUCCEEDED')
