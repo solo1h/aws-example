@@ -60,9 +60,9 @@ export class UploadApiService {
     this.app.post('/upload-request', this.postUploadRequest())
 
     this.app.all('*path', (req, res) => {
-      res.status(404).json({
-        error: 'Not found',
-        message: 'Endpoint not found'
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid path'
       })
     })
   }
@@ -200,7 +200,7 @@ export class UploadApiService {
         const uploadUrl = await s3.getPresignedUrl(jobId, fname)
         await jobs.register(jobId)
 
-        res.status(200).json({
+        res.status(201).json({
           job_id: jobId,
           upload_url: uploadUrl
         })

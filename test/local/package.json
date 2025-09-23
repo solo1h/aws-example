@@ -12,10 +12,10 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.55.0",
-    "@types/node": "^24.5.2"
+    "@types/node": "^24.5.2",
+    "prettier": "^3.6.2"
   },
   "dependencies": {
-    "@aws-sdk/client-eventbridge": "^3.893.0",
-    "prettier": "^3.6.2"
+    "@aws-sdk/client-eventbridge": "^3.893.0"
   }
 }
