@@ -3,16 +3,16 @@ networks:
     driver: bridge
 
 services:
-  pgadmin_service:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD: SuperSecret
-    ports:
-      - '5050:80'
-    networks:
-      - stack
+  # pgadmin_service:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: user@domain.com
+  #     PGADMIN_DEFAULT_PASSWORD: SuperSecret
+  #   ports:
+  #     - '5050:80'
+  #   networks:
+  #     - stack
 
   postgres_service:
     image: postgres
@@ -80,19 +80,6 @@ services:
     networks:
       - stack
 
-  api-init:
-    image: api-service
-    container_name: api-init
-    environment:
-      SERVICE_NAME: api-init
-      DB_HOST: pg
-    depends_on:
-      postgres_service:
-        condition: service_healthy
-    networks:
-      - stack
-    entrypoint: node index.js init
-
   api-service:
     image: api-service
     container_name: api
@@ -102,10 +89,8 @@ services:
       DB_HOST: pg
       AWS_ENDPOINT_URL: http://localstack:4566
     depends_on:
-      api-init:
-        condition: service_completed_successfully
-      aws-init:
-        condition: service_completed_successfully
+      postgres_service:
+        condition: service_healthy
     ports:
       - '8000:3000'
     networks:

@@ -2,7 +2,7 @@
 FROM node:22-alpine AS builder
 
 WORKDIR /app
-COPY package*.json ./
+COPY package*.json entrypoint.sh ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Release
@@ -18,4 +18,6 @@ COPY --chown=nodejs:nodejs . .
 
 USER nodejs
 EXPOSE 3000
-CMD ["node", "index.js", "serve"]
+
+ENTRYPOINT ["/bin/sh"]
+CMD ["entrypoint.sh"]
