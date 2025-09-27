@@ -11,8 +11,6 @@ through an AWS cloud infrastructure.
 2. The system processes the uploaded media file according to specified processing settings
 3. Processed content is then distributed through CloudFront CDN for optimal delivery
 
-**AWS Infrastructure Architecture:**
-
 ![AWS Infra](./docs/AWS.png "AWS Infrastructure Diagram")
 
 ## Proof of Concept Implementation
@@ -37,7 +35,7 @@ of the media processing pipeline:
 Execute the `init.sh` script to install all necessary dependencies
 and configure the local development environment.
 
-Run the `build.sh` script to compile and package all artifacts:
+Run the `build.sh` script to build and package all artifacts:
 - `api-service:latest` - Local Docker image containing the API service
 - `mock-emc:latest` - Local Docker image with EMC mock
 - `test/local/s3event.zip` - S3 event processing Lambda
