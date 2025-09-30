@@ -51,4 +51,13 @@ Run the `build.sh` script to build and package all artifacts:
 
 ### AWS Deployment
 
-**WIP**
+️Current IaC configuration is a draft created for demo purposes only.
+It is **not secure**. 
+
+⚠️ **Deploy at your own risk.** ⚠️ 
+
+1. Deploy the stack `iac/test-aws-stack.yml` with CloudFormation.
+2. Upload `api-service:latest` image to *ECR*
+3. Run an *ECS* service with the stack *ALB*, *Listner*, *TargetGroup*, *ECS TG*, and private network.
+
+API endpoint should be avilable on *ALB* port 3000.
