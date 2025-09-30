@@ -475,11 +475,7 @@ Resources:
         - Name: "api-container"
           Image: !Sub "${ECRRepository.RepositoryUri}:latest"
           Essential: true
-          # EntryPoint:
-          #   - 'node'
-          #   - 'index.js'
-          #   - 'init'
-          Environment: # FIXME IAM Auth
+          Environment:
             - Name: "DB_HOST"
               Value: !GetAtt RDSInstance.Endpoint.Address
             - Name: "DB_PORT"
@@ -492,12 +488,16 @@ Resources:
               Value: !Ref DBPassword
             - Name: "DB_SSL"
               Value: "true"
+            - Name: "S3_BUCKET_NAME"
+              Value: !Ref S3BucketName
+            - Name: "AWS_REGION"
+              Value: !Ref AWS::Region
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
               awslogs-group: !Ref ECSLogGroup
-              awslogs-region: !Ref "AWS::Region"
-              awslogs-stream-prefix: "ecs"
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
 
   # s3 Lambda
   S3LambdaExecutionRole:
@@ -521,6 +521,15 @@ Resources:
                 Action:
                   - rds:DescribeDBInstances
                 Resource: "*"
+        - PolicyName: EMCApiCallPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - mediaconvert:CreateJob
+                  - mediaconvert:DescribeEndpoints
+                Resource: "*"
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-s3-lambda-role"
@@ -537,11 +546,16 @@ Resources:
           exports.handler = async (event, context) => {console.log(event)}
       Environment:
         Variables:
-          DB_HOST: "pg hostname" #!GetAtt RDSInstance.Endpoint.Address
-          DB_PORT: "5432" #!GetAtt RDSInstance.Endpoint.Port
+          DB_HOST: !GetAtt RDSInstance.Endpoint.Address
+          DB_PORT: !GetAtt RDSInstance.Endpoint.Port
           DB_NAME: !Ref DBDatabaseName
           DB_USER: !Ref DBUsername
           DB_PASSWORD: !Ref DBPassword
+          DB_SSL: "true"
+          S3_BUCKET_NAME: !Ref S3BucketName
+          AWS_REGION: !Ref AWS::Region
+          EMC_ENDPOINT_URL: "EMS_endpoint_expected_here"
+          EMC_ROLE_ARN: "MediaConvert_role_ARN_expected_here"
       VpcConfig:
         SecurityGroupIds:
           - !Ref S3LambdaSecurityGroup

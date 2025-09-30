@@ -28,12 +28,13 @@ of the media processing pipeline:
 **Prerequisites:**
 - `bash` or `sh` shell environment
 - Node Version Manager (`nvm`) with Node.js installed
-- Docker Compose for builds and local testing
+- Docker + Compose for builds and local testing
+- Free localhost TCP ports `5432`, `4567`, `3001` and `8000` for local testing
 
 **Setup Process:**
 
-Execute the `init.sh` script to install all necessary dependencies
-and configure the local development environment.
+Run `nvm use` in the project roon, and then - `init.sh` script
+to install NPM dependencies and pull docker images.
 
 Run the `build.sh` script to build and package all artifacts:
 - `api-service:latest` - Local Docker image containing the API service
@@ -44,8 +45,9 @@ Run the `build.sh` script to build and package all artifacts:
 **Running Local Tests:**
 
 1. Navigate to the `test/local` directory
-2. Execute Docker Compose to spin up all containerized services and wait for the aws-init container to complete its initialization process
-3. Run API and happy path tests using `npm test`
+2. Run `docker compose up` to spin up all containerized services and wait for the `aws-init` container to complete its initialization process
+3. Run API and happy path tests with `npm test`
+4. Release the stack in the end with `docker compose down`
 
 ### AWS Deployment
 

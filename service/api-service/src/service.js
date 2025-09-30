@@ -3,6 +3,12 @@ import * as uuid from 'uuid'
 import { Jobs as DbJobs } from './db.js'
 import { S3 } from './aws.js'
 
+/**
+ * Extracts and parses service configuration from the given config object.
+ *
+ * @param {Object} cfg - The configuration object
+ * @returns {{port: number, apiVersion: string}} - Parsed service configuration
+ */
 export function getServiceConfig (cfg) {
   return {
     port: parseInt(cfg.service.port),
@@ -10,7 +16,16 @@ export function getServiceConfig (cfg) {
   }
 }
 
+/**
+ * API Service class that handles HTTP requests for job management and uploads.
+ */
 export class UploadApiService {
+  /**
+   * Creates an instance of UploadApiService.
+   *
+   * @param {Object} config - Configuration object
+   * @param {Object} logger - Logger instance
+   */
   constructor (config, logger) {
     this.log = logger
     this.cfg = getServiceConfig(config)
@@ -24,6 +39,9 @@ export class UploadApiService {
     this.server = null
   }
 
+  /**
+   * Starts the API service.
+   */
   async start () {
     await this.db.connect()
 
@@ -32,6 +50,9 @@ export class UploadApiService {
     })
   }
 
+  /**
+   * Stops the API service gracefully.
+   */
   async stop () {
     this.log.info('Starting graceful shutdown')
 
@@ -47,12 +68,18 @@ export class UploadApiService {
     }
   }
 
+  /**
+   * Sets up middleware for the Express app.
+   */
   setupMiddleware () {
     this.app.use(express.json({ limit: '10mb' }))
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(this.middlewareLogger())
   }
 
+  /**
+   * Sets up routes for the Express app.
+   */
   setupRoutes () {
     this.app.get('/health', this.getHealth())
     this.app.get('/jobs/:jobId', this.getJobById())
@@ -67,6 +94,11 @@ export class UploadApiService {
     })
   }
 
+  /**
+   * Creates a middleware function for logging HTTP requests.
+   *
+   * @returns {Function} Express middleware function
+   */
   middlewareLogger () {
     const logger = this.log
 
@@ -95,6 +127,11 @@ export class UploadApiService {
     }
   }
 
+  /**
+   * Handler for the health check endpoint.
+   *
+   * @returns {Function} Express request handler
+   */
   getHealth () {
     return async (req, res) => {
       res.status(200).json({
@@ -106,6 +143,11 @@ export class UploadApiService {
     }
   }
 
+  /**
+   * Handler for retrieving a job by its ID.
+   *
+   * @returns {Function} Express request handler
+   */
   getJobById () {
     const logger = this.log
     const jobs = this.db
@@ -154,6 +196,11 @@ export class UploadApiService {
     }
   }
 
+  /**
+   * Handler for retrieving job statuses.
+   *
+   * @returns {Function} Express request handler
+   */
   getJobStatuses () {
     const logger = this.log
     const jobs = this.db
@@ -184,6 +231,11 @@ export class UploadApiService {
     }
   }
 
+  /**
+   * Handler for creating upload requests.
+   *
+   * @returns {Function} Express request handler
+   */
   postUploadRequest () {
     const logger = this.log
     const jobs = this.db
@@ -218,6 +270,12 @@ export class UploadApiService {
   }
 }
 
+/**
+ * Runs the UploadApiService with given configuration and logger.
+ *
+ * @param {Object} config - Configuration object
+ * @param {Object} logger - Logger instance
+ */
 export async function runService (config, logger) {
   const service = new UploadApiService(config, logger)
   await service.start()

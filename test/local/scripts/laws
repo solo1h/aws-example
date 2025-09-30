@@ -6,4 +6,4 @@ docker run -ti --rm --net local_stack -v ./:/aws \
     -e AWS_SECRET_ACCESS_KEY=test \
     -e AWS_ENDPOINT_URL=http://localstack:4566 \
     --entrypoint /bin/sh \
-    d191680ecbe8
+    amazon/aws-cli

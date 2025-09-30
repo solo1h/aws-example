@@ -9,7 +9,8 @@ aws s3api put-bucket-notification-configuration \
     --bucket test-bucket \
     --notification-configuration '{"EventBridgeConfiguration": {}}'
 
-# Create IAM role for Lambdas
+# Create IAM roles
+# . Lambdas
 cat > trust-policy.json << EOF
 {
   "Version": "2012-10-17",
@@ -32,6 +33,54 @@ rm trust-policy.json
 aws iam attach-role-policy \
   --role-name lambda-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+# . EMC
+cat > trust-policy.json << EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadInputFiles",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetBucketLocation",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::test-bucket/input",
+        "arn:aws:s3:::test-bucket/input/*"
+      ]
+    },
+    {
+      "Sid": "WriteOutputFiles",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": [
+        "arn:aws:s3:::test-bucket/output",
+        "arn:aws:s3:::test-bucket/output/*"
+      ]
+    },
+    {
+      "Sid": "Logs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+}
+EOF
+aws iam create-role \
+  --role-name MediaConvertRole \
+  --assume-role-policy-document file://trust-policy.json
+rm trust-policy.json
 
 # Upload s3 event lambda
 aws lambda create-function \

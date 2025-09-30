@@ -2,37 +2,66 @@ const mc = require('@aws-sdk/client-mediaconvert')
 const pg = require('pg')
 const axios = require('axios')
 
-const config = {
-  env: 'development',
-  db: {
-    host: process.env.DB_HOST || 'pg',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
-    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-    database: process.env.DB_NAME || 'video_converter'
- 
+const environment = process.env.ENVIRONMENT || 'test'
+
+const dbConfig = {
+  host: process.env.DB_HOST || 'pg',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  database: process.env.DB_NAME || 'video_converter'
+}
+
+const awsTest = {
+  client: {
+    endpoint: process.env.EMC_ENDPOINT_URL || 'http://mediaconvert:3000',
+    region: process.env.AWS_REGION || 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test'
+    },
+    forcePathStyle: true,
+    sslEnabled: false
   },
-  aws: {
-    client: { // FIXME: switch depends on env
-      endpoint: 'http://mediaconvert:3000',
-      region: 'us-east-1',
-      credentials: {
-        accessKeyId: 'test',
-        secretAccessKey: 'test'
-      },
-      forcePathStyle: true,
-      sslEnabled: false
-    },
-    s3: {
-      bucketName: process.env.S3_BUCKET_NAME || 'test-bucket',
-    },
-    emc: {
-      role: 'arn:aws:iam::000000000000:role/MediaConvertRole' 
-    }
+  s3: {
+    bucketName: process.env.S3_BUCKET_NAME || 'test-bucket',
+    presignedUrlExpiry: parseInt(process.env.S3_PRESIGNED_URL_EXPIRY || '3600')
+  },
+  emc: {
+    role: 'arn:aws:iam::000000000000:role/MediaConvertRole'
   }
 }
 
+const awsProd = {
+  client: {
+    endpoint: process.env.EMC_ENDPOINT_URL,
+    region: process.env.AWS_REGION || 'eu-central-1',
+  },
+  s3: {
+    bucketName: process.env.S3_BUCKET_NAME || 'test-bucket',
+    presignedUrlExpiry: parseInt(process.env.S3_PRESIGNED_URL_EXPIRY || '3600')
+  },
+  emc: {
+    role: process.env.EMC_ROLE_ARN
+  }
+}
+
+const configTest = {
+  env: environment,
+  db: dbConfig,
+  aws: awsTest,
+}
+
+const configProd = {
+  env: environment,
+  db: dbConfig,
+  aws: awsProd,
+}
+
+const config = environment === 'test' ? configTest : configProd
+
+// Function to update job status in the database
 const dbUpdateJob = async (key, jobId) => {
   const uuid = key.split('/')[1]
   const query = `
@@ -48,8 +77,10 @@ const dbUpdateJob = async (key, jobId) => {
 
   await client.connect()
   await client.query(query, values)
+  await client.end()
 }
 
+// AWS EMC magic
 const mcCreateJob = async (s3Bucket, s3Key, emcRole) => {
   const params = {
     Role: emcRole,
@@ -126,13 +157,23 @@ const mcCreateJob = async (s3Bucket, s3Key, emcRole) => {
     }
   }
 
-  // FIXME: real request not working with mocks env
-  // const client = new mc.MediaConvertClient(config);
-  // return await client.send(new mc.CreateJobCommand(params));
-  const response = await axios.post(`${config.aws.client.endpoint}/2017-08-29/jobs`, {})
-  return response.data
+  if (environment === 'test') {
+    // TODO: fix EMC mock, real AWS client not working with it
+    const {data} = await axios.post(`${config.aws.client.endpoint}/2017-08-29/jobs`, {})
+    return data
+  } else {
+    // XXX: MediaConvert is not available in the AWS free tier
+    // const client = new mc.MediaConvertClient(config.aws.client);
+    // return await client.send(new mc.CreateJobCommand(params));
+    return {
+      Job: {
+        Id: "stubXXXXYYYYZZZZ"
+      }
+    }
+  }
 }
 
+// Main event handler
 exports.handler = async (event, context) => {
   try {
     if (event.source === 'aws.s3' && event['detail-type'] === 'Object Created') {

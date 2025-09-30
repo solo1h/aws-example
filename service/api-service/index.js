@@ -1,13 +1,16 @@
 import { config } from './src/config.js'
 import { logger, die } from './src/logger.js'
 import { runMigrations } from './src/db.js'
-import { runService } from './src/serveice.js'
+import { runService } from './src/service.js'
 
+// Defines the available run modes for the application.
 const RunMode = {
   init: runMigrations,
   serve: runService
 }
 
+// Parses the CLI command argument and validates it.
+// Validate that the command is either 'init' or 'serve'
 function parseCliCommand () {
   const args = process.argv.slice(2)
   if (args.length !== 1) {
@@ -22,6 +25,7 @@ function parseCliCommand () {
   return command
 }
 
+// Main execution function for the application.
 async function run () {
   const log = logger.child({ service: config.service.name })
   log.info('Start service')
@@ -33,4 +37,5 @@ async function run () {
   }
 }
 
+// Start the application by calling the run function
 await run()
