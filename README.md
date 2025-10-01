@@ -52,7 +52,7 @@ AWS CloudFormation config - `iac/test-aws-stack.yml`
 
 ### Setup Process
 
-Run `nvm use` in the project roon, and then - `init.sh` script
+Run `nvm use` in the project root, and then - `init.sh` script
 to install NPM dependencies and pull docker images.
 
 Run the `build.sh` script to build and package all artifacts:
