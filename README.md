@@ -1,4 +1,4 @@
-# Example of Test Implementation for AWS API Service
+# Local Testing Example of an AWS-Deployable API Service
 
 ## Service Blueprint
 
@@ -15,7 +15,7 @@ through an AWS cloud infrastructure.
 
 ## Proof of Concept Implementation
 
-The proof-of-concept implementation focuses on covering the main components
+The PoC implementation focuses on covering the main components
 of the media processing pipeline:
 
 1. **API Service** - Handles client requests and responses with upload URLs
@@ -23,15 +23,34 @@ of the media processing pipeline:
 3. **EMC Event Processing Lambda** - Handels EMC events and updates Job records
 4. **AWS IaC Draft** - Provides the foundational infrastructure template for AWS CloudFormation
 
-### Local Setup and Testing Environment
+*Elemental MediaConvert* is not available in *AWS Free Tier* and *Localstack Free Plan*,
+so **it's mocked locally** and **skipped in the IaC** configuration.
 
-**Prerequisites:**
-- `bash` or `sh` shell environment
+*CloudFront* is not available in *Localstack Free Plan* and is omitted for PoC simplicity.
+
+*API Gateway* is omitted locally and replaced with *Internet Gateway*
+in the IaC config for PoC simplicity.
+
+## Local Setup and Testing Environment
+
+### Prerequisites
+- `bash` shell environment
 - Node Version Manager (`nvm`) with Node.js installed
 - Docker + Compose for builds and local testing
 - Free localhost TCP ports `5432`, `4567`, `3001` and `8000` for local testing
 
-**Setup Process:**
+### Overview
+
+Source code of the service - `service/*`
+
+Testing - `test/local` 
+- `tests/example.spec.ts` - Playwright API tests
+- `scripts/init-stack.sh` - Localstack init
+- `scripts/laws` - local AWS CLI for debugging
+
+AWS CloudFormation config - `iac/test-aws-stack.yml`
+
+### Setup Process
 
 Run `nvm use` in the project roon, and then - `init.sh` script
 to install NPM dependencies and pull docker images.
@@ -42,14 +61,14 @@ Run the `build.sh` script to build and package all artifacts:
 - `test/local/s3event.zip` - S3 event processing Lambda
 - `test/local/emcEvent.zip` - EMC event processing Lambda
 
-**Running Local Tests:**
+### Local Testing
 
 1. Navigate to the `test/local` directory
 2. Run `docker compose up` to spin up all containerized services and wait for the `aws-init` container to complete its initialization process
 3. Run API and happy path tests with `npm test`
 4. Release the stack in the end with `docker compose down`
 
-### AWS Deployment
+## AWS Deployment
 
 ️Current IaC configuration is a draft created for demo purposes only.
 It is **not secure**. 
@@ -60,4 +79,18 @@ It is **not secure**.
 2. Upload `api-service:latest` image to *ECR*
 3. Run an *ECS* service with the stack *ALB*, *Listner*, *TargetGroup*, *ECS TG*, and private network.
 
-API endpoint should be avilable on *ALB* port 3000.
+API endpoint should be accessible on *ALB Hostname* port 3000.
+
+```bash
+# Request an upload URL
+curl -X POST http://your.alb.hostname:3000/upload-request
+
+# Upload a file
+curl -v -X PUT -T ./your.file -H "Content-Type: text/plain" https://upload_url.from/the/first/response
+
+# Get Job status
+curl http://your.alb.hostname:3000/jobs/uuid-from-the-first-response
+
+# Get the list of jobs
+curl http://your.alb.hostname:3000/jobs
+```
