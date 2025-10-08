@@ -1,8 +1,8 @@
 #!/bin/sh
-node index.js init
+node main.js init
 
 if [ $? -eq 0 ]; then
-    node index.js serve
+    node main.js serve
 else
     exit 1
 fi

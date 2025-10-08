@@ -1,23 +1,32 @@
-import { config } from './src/config.js'
-import { logger, die } from './src/logger.js'
-import { runMigrations } from './src/db.js'
-import { runService } from './src/service.js'
+import { Logger } from 'winston'
+import { config, type Config } from './config'
+import { logger, die } from './logger'
+import { runMigrations } from './db'
+import { runService } from './service'
+
+// Define types for better type safety
+type RunModeKey = 'init' | 'serve'
+
+interface RunMode {
+  init: (config: Config, log: Logger) => Promise<void>
+  serve: (config: Config, log: Logger) => Promise<void>
+}
 
 // Defines the available run modes for the application.
-const RunMode = {
+const RunMode: RunMode = {
   init: runMigrations,
   serve: runService
 }
 
 // Parses the CLI command argument and validates it.
 // Validate that the command is either 'init' or 'serve'
-function parseCliCommand () {
+function parseCliCommand(): RunModeKey {
   const args = process.argv.slice(2)
   if (args.length !== 1) {
     die(`Expected 1 CLI argument, but ${args.length} is given.`)
   }
 
-  const command = args[0]
+  const command = args[0] as RunModeKey
   if (!Object.keys(RunMode).includes(command)) {
     die(`Expected command 'init' or 'serve', but '${command}' is given.`)
   }
@@ -26,7 +35,7 @@ function parseCliCommand () {
 }
 
 // Main execution function for the application.
-async function run () {
+async function run(): Promise<void> {
   const log = logger.child({ service: config.service.name })
   log.info('Start service')
 
@@ -38,4 +47,4 @@ async function run () {
 }
 
 // Start the application by calling the run function
-await run()
+run()

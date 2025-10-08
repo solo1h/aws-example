@@ -1,3 +1,5 @@
+import { Logger } from 'winston'
+import { Config, DbConfig } from './config'
 import * as path from 'node:path'
 import { Pool, Client } from 'pg'
 import { migrate } from 'postgres-migrations'
@@ -10,10 +12,13 @@ import { migrate } from 'postgres-migrations'
  * 3. Creates the database if it doesn't exist
  * 4. Runs migrations against the target database
  *
- * @param {Object} config - Configuration object containing db settings
- * @param {Object} logger - Logger instance for logging operations
+ * @param {Config} config - Configuration object containing db settings
+ * @param {Logger} logger - Logger instance for logging operations
  */
-export async function runMigrations (config, logger) {
+export async function runMigrations(
+  config: Config,
+  logger: Logger
+): Promise<void> {
   const log = logger.child({ actor: 'pg DB migration' })
   const dbConfig = config.db
   const dbName = dbConfig.database
@@ -47,7 +52,7 @@ export async function runMigrations (config, logger) {
   // Restore the database name and run migrations
   dbConfig.database = dbName
   await migrate(dbConfig, path.resolve(process.cwd(), 'migrations'), {
-    logger: msg => {
+    logger: (msg) => {
       log.debug(msg)
     }
   })
@@ -56,11 +61,11 @@ export async function runMigrations (config, logger) {
 /**
  * Creates a PostgreSQL connection pool with default settings.
  *
- * @param {Object} cfg - Database configuration object
- * @param {Object} log - Logger instance for logging operations
+ * @param {DbConfig} cfg - Database configuration object
+ * @param {Logger} log - Logger instance for logging operations
  * @returns {Pool} - Configured Pool instance
  */
-export function createPool (cfg, log) {
+export function createPool(cfg: DbConfig, log: Logger): Pool {
   const pool = new Pool({
     ...cfg,
     max: 20,
@@ -72,7 +77,7 @@ export function createPool (cfg, log) {
     log.info('Connected to PostgreSQL database')
   })
 
-  pool.on('error', err => {
+  pool.on('error', (err) => {
     log.error('PostgreSQL connection error:', err)
   })
 
@@ -80,16 +85,49 @@ export function createPool (cfg, log) {
 }
 
 /**
+ * Interface for job status options.
+ */
+export interface JobStatusOptions {
+  limit?: number
+  offset?: number
+  status?: string
+}
+
+/**
+ * Pagination information object.
+ */
+export interface PaginationInfo {
+  total: number
+  limit: number
+  offset: number
+  hasMore: boolean
+  totalPages: number
+  currentPage: number
+}
+
+/**
+ * Jobs list response object.
+ */
+export interface JobListResponse {
+  jobs: any[] // Replace `any` with actual job type if defined
+  pagination: PaginationInfo
+}
+
+/**
  * Class for managing job operations.
  */
 export class Jobs {
+  private log: Logger
+  private cfg: DbConfig
+  private pool: Pool | null
+
   /**
    * Creates a new Jobs instance.
    *
-   * @param {Object} cfg - Database configuration object
-   * @param {Object} log - Logger instance for logging operations
+   * @param {DbConfig} cfg - Database configuration object
+   * @param {Logger} log - Logger instance for logging operations
    */
-  constructor (cfg, log) {
+  constructor(cfg: Config, log: Logger) {
     this.log = log.child({ actor: 'pg' })
     this.cfg = cfg.db
     this.pool = null
@@ -98,33 +136,35 @@ export class Jobs {
   /**
    * Connects to the PostgreSQL database and creates a connection pool.
    */
-  async connect () {
+  async connect(): Promise<void> {
     this.pool = createPool(this.cfg, this.log)
   }
 
   /**
    * Closes the connection pool.
    */
-  async close () {
-    await this.pool.end()
+  async close(): Promise<void> {
+    if (this.pool) {
+      await this.pool.end()
+    }
   }
 
   /**
    * Registers a new job in the database.
    *
-   * @param {string} job_id - Unique job identifier
-   * @param {string} input_key - Input data key for the job
+   * @param {string} jobId - Unique job identifier
+   * @param {string} inputKey - Input data key for the job
    * @returns {Object} - The created job record
    */
-  async register (job_id, input_key) {
+  async register(jobId: string, inputKey: string): Promise<any> {
     const query = 'INSERT INTO jobs (job_id, input) VALUES ($1, $2)'
-    const values = [job_id, input_key]
+    const values = [jobId, inputKey]
 
     try {
       const result = await this.pool.query(query, values)
       return result.rows[0]
     } catch (error) {
-      throw new Error(`Failed to register job: ${error.message}`)
+      throw new Error(`Failed to register job: ${(error as Error).message}`)
     }
   }
 
@@ -134,27 +174,24 @@ export class Jobs {
    * @param {string} jobId - The job identifier
    * @returns {Object|null} - The job record or null if not found
    */
-  async getById (jobId) {
+  async getById(jobId: string): Promise<any | null> {
     const query = 'SELECT * FROM jobs WHERE job_id = $1'
 
     try {
       const result = await this.pool.query(query, [jobId])
       return result.rows[0] || null
     } catch (error) {
-      throw new Error(`Failed to get job: ${error.message}`)
+      throw new Error(`Failed to get job: ${(error as Error).message}`)
     }
   }
 
   /**
    * Retrieves a list of jobs with pagination and optional status filtering.
    *
-   * @param {Object} [options={}] - Options for filtering and pagination
-   * @param {number} [options.limit=50] - Maximum number of records to return
-   * @param {number} [options.offset=0] - Number of records to skip
-   * @param {string} [options.status] - Optional status filter
-   * @returns {Object} - Object containing jobs array and pagination information
+   * @param {JobStatusOptions} [options={}] - Options for filtering and pagination
+   * @returns {Promise<JobListResponse>} - Object containing jobs array and pagination information
    */
-  async getStatuses (options = {}) {
+  async getStatuses(options: JobStatusOptions = {}): Promise<JobListResponse> {
     const { limit = 50, offset = 0, status } = options
 
     let query = `
@@ -221,11 +258,20 @@ export class Jobs {
    * Updates a job record with the provided updates.
    *
    * @param {string} jobId - The job identifier to update
-   * @param {Object} updates - Object containing fields to update
-   * @returns {Object|null} - The updated job record or null if not found
+   * @param {Record<string, any>} updates - Object containing fields to update
+   * @returns {Promise<any | null>} - The updated job record or null if not found
    */
-  async updateJob (jobId, updates) {
-    const allowedFields = ['status', 'output', 'output_cdn_url', 'mc_job_id', 'error_message']
+  async updateJob(
+    jobId: string,
+    updates: Record<string, any>
+  ): Promise<any | null> {
+    const allowedFields = [
+      'status',
+      'output',
+      'output_cdn_url',
+      'mc_job_id',
+      'error_message'
+    ]
     const updateFields = []
     const values = []
     let paramCount = 0

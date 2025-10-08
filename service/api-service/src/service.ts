@@ -1,34 +1,30 @@
-import express from 'express'
+import { Logger } from 'winston'
+import express, { Application, Request, Response } from 'express'
 import * as uuid from 'uuid'
-import { Jobs as DbJobs } from './db.js'
-import { S3 } from './aws.js'
-
-/**
- * Extracts and parses service configuration from the given config object.
- *
- * @param {Object} cfg - The configuration object
- * @returns {{port: number, apiVersion: string}} - Parsed service configuration
- */
-export function getServiceConfig (cfg) {
-  return {
-    port: parseInt(cfg.service.port),
-    apiVersion: cfg.service.api
-  }
-}
+import { Config, ServiceConfig } from './config'
+import { Jobs as DbJobs } from './db'
+import { S3 } from './aws'
 
 /**
  * API Service class that handles HTTP requests for job management and uploads.
  */
 export class UploadApiService {
+  private app: Application
+  private server: any
+  private log: Logger
+  private cfg: ServiceConfig
+  private db: DbJobs
+  private s3: S3
+
   /**
    * Creates an instance of UploadApiService.
    *
    * @param {Object} config - Configuration object
    * @param {Object} logger - Logger instance
    */
-  constructor (config, logger) {
+  constructor(config: Config, logger: Logger) {
     this.log = logger
-    this.cfg = getServiceConfig(config)
+    this.cfg = config.service
     this.db = new DbJobs(config, logger)
     this.s3 = new S3(config, logger)
 
@@ -42,7 +38,7 @@ export class UploadApiService {
   /**
    * Starts the API service.
    */
-  async start () {
+  async start(): Promise<void> {
     await this.db.connect()
 
     this.server = this.app.listen(this.cfg.port, () => {
@@ -53,7 +49,7 @@ export class UploadApiService {
   /**
    * Stops the API service gracefully.
    */
-  async stop () {
+  async stop(): Promise<void> {
     this.log.info('Starting graceful shutdown')
 
     if (this.server) {
@@ -71,7 +67,7 @@ export class UploadApiService {
   /**
    * Sets up middleware for the Express app.
    */
-  setupMiddleware () {
+  private setupMiddleware(): void {
     this.app.use(express.json({ limit: '10mb' }))
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(this.middlewareLogger())
@@ -80,13 +76,13 @@ export class UploadApiService {
   /**
    * Sets up routes for the Express app.
    */
-  setupRoutes () {
+  private setupRoutes(): void {
     this.app.get('/health', this.getHealth())
     this.app.get('/jobs/:jobId', this.getJobById())
     this.app.get('/jobs', this.getJobStatuses())
     this.app.post('/upload-request', this.postUploadRequest())
 
-    this.app.all('*path', (req, res) => {
+    this.app.all('*path', (req: Request, res: Response) => {
       res.status(400).json({
         error: 'Bad request',
         message: 'Invalid path'
@@ -99,10 +95,10 @@ export class UploadApiService {
    *
    * @returns {Function} Express middleware function
    */
-  middlewareLogger () {
+  private middlewareLogger() {
     const logger = this.log
 
-    return (req, res, next) => {
+    return (req: Request, res: Response, next: any) => {
       const start = Date.now()
 
       res.on('finish', () => {
@@ -132,8 +128,8 @@ export class UploadApiService {
    *
    * @returns {Function} Express request handler
    */
-  getHealth () {
-    return async (req, res) => {
+  private getHealth() {
+    return async (req: Request, res: Response) => {
       res.status(200).json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -148,13 +144,13 @@ export class UploadApiService {
    *
    * @returns {Function} Express request handler
    */
-  getJobById () {
+  private getJobById() {
     const logger = this.log
     const jobs = this.db
 
-    return async (req, res) => {
+    return async (req: Request, res: Response) => {
       try {
-        const { jobId } = req.params
+        const { jobId } = req.params as { jobId: string }
 
         if (!uuid.validate(jobId)) {
           return res.status(400).json({
@@ -201,12 +197,13 @@ export class UploadApiService {
    *
    * @returns {Function} Express request handler
    */
-  getJobStatuses () {
+  private getJobStatuses() {
     const logger = this.log
     const jobs = this.db
 
-    return async (req, res) => {
+    return async (req: Request, res: Response) => {
       try {
+        // @ts-ignore
         const limit = parseInt(req.query.limit) || 50
 
         if (limit < 1 || limit > 1000) {
@@ -236,21 +233,21 @@ export class UploadApiService {
    *
    * @returns {Function} Express request handler
    */
-  postUploadRequest () {
+  private postUploadRequest() {
     const logger = this.log
     const jobs = this.db
     const s3 = this.s3
 
-    return async (req, res) => {
+    return async (req: Request, res: Response) => {
       try {
         const jobId = uuid.v4()
-        const fname = 'foobar'
+        const fileName = 'foobar'
         // FIXME: parse body
-        // . get fname
+        // . get fileName
         // . get metadata
 
-        const uploadUrl = await s3.getPresignedUrl(jobId, fname)
-        await jobs.register(jobId)
+        const uploadUrl = await s3.getPresignedUrl(jobId, fileName)
+        await jobs.register(jobId, fileName)
 
         res.status(201).json({
           job_id: jobId,
@@ -276,7 +273,10 @@ export class UploadApiService {
  * @param {Object} config - Configuration object
  * @param {Object} logger - Logger instance
  */
-export async function runService (config, logger) {
+export async function runService(
+  config: Config,
+  logger: Logger
+): Promise<void> {
   const service = new UploadApiService(config, logger)
   await service.start()
 }

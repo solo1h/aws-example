@@ -1,11 +1,54 @@
-const environment = process.env.ENVIRONMENT || 'test'
+// Define types for configuration objects
+export interface ServiceConfig {
+  name: string
+  port: string
+}
 
-const serviceConfig = {
+export interface DbConfig {
+  host: string
+  port: number
+  user: string
+  password: string
+  ssl: boolean | { rejectUnauthorized: false }
+  database: string
+}
+
+export interface AwsClientConfig {
+  endpoint?: string
+  region: string
+  credentials?: {
+    accessKeyId: string
+    secretAccessKey: string
+  }
+  forcePathStyle?: boolean
+  sslEnabled?: boolean
+}
+
+export interface AwsS3Config {
+  bucketName: string
+  presignedUrlExpiry: number
+}
+
+export interface AwsConfig {
+  client: AwsClientConfig
+  s3: AwsS3Config
+}
+
+export interface Config {
+  env: string
+  service: ServiceConfig
+  db: DbConfig
+  aws: AwsConfig
+}
+
+const environment: string = process.env.ENVIRONMENT || 'test'
+
+const serviceConfig: ServiceConfig = {
   name: process.env.SERVICE_NAME || 'api-service',
   port: process.env.SERVICE_PORT || '3000'
 }
 
-const dbConfig = {
+const dbConfig: DbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
   user: process.env.DB_USER || 'postgres',
@@ -14,7 +57,7 @@ const dbConfig = {
   database: process.env.DB_NAME || 'video_converter'
 }
 
-const awsTest = {
+const awsTest: AwsConfig = {
   client: {
     endpoint: process.env.AWS_ENDPOINT_URL || 'http://localhost:4567',
     region: process.env.AWS_REGION || 'us-east-1',
@@ -31,7 +74,7 @@ const awsTest = {
   }
 }
 
-const awsProd = {
+const awsProd: AwsConfig = {
   client: {
     region: process.env.AWS_REGION || 'eu-central-1'
   },
@@ -41,18 +84,18 @@ const awsProd = {
   }
 }
 
-const configTest = {
+const configTest: Config = {
   env: environment,
   service: serviceConfig,
   db: dbConfig,
   aws: awsTest
 }
 
-const configProd = {
+const configProd: Config = {
   env: environment,
   service: serviceConfig,
   db: dbConfig,
   aws: awsProd
 }
 
-export const config = environment === 'test' ? configTest : configProd
+export const config: Config = environment === 'test' ? configTest : configProd

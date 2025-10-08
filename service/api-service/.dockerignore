@@ -1,5 +1,6 @@
 node_modules
+dist
 .nvmrc
 .prettierrc
+.prettierignore
 Dockerfile*
-eslint.config.js
